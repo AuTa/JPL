@@ -3,7 +3,7 @@
 from sqlalchemy import Column, Integer, String, Text, PickleType, DateTime, \
     ForeignKey, Table
 # from app import db
-from database import Base
+from database import Base, SQLALCHEMY
 from sqlalchemy.orm import relationship, backref
 from datetime import datetime
 
@@ -20,7 +20,7 @@ class Kana(Base):
         return '<Kana {0}>'.format(self.romaji)
 
     @staticmethod
-    def insert_kanas(session):
+    def insert_kanas(db):
         kanas = {
             'Seion': [
                 ['あ', 'ア', 'a'], ['い', 'イ', 'i'], ['う', 'ウ', 'u'], ['え', 'エ', 'e'], ['お', 'オ', 'o'],
@@ -63,17 +63,18 @@ class Kana(Base):
                 ['ぴゃ', 'ピャ', 'pya'], ['ぴゅ', 'ピュ', 'pyu'], ['ぴょ', 'ピョ', 'pyo'],
             ]
         }
-        for key, value in kanas.values():
-            for k in value:
-                kana = Kana.query.filter_by(hiragana=k[0]).first()
-                if kana is None:
-                    kana = Kana(hiragana=k[0])
-                kana.katakana = k[1]
-                kana.romaji = k[2]
-                pronunciation = PronunciationOfKanamoji.query.filter_by(character=key).first()
-                kana.pronunciation = pronunciation
-                session.add(kana)
-        session.commit()
+        with db.session as session:
+            for key, value in kanas.items():
+                for k in value:
+                    kana = Kana.query(session).filter_by(hiragana=k[0]).first()
+                    if kana is None:
+                        kana = Kana(hiragana=k[0])
+                    kana.katakana = k[1]
+                    kana.romaji = k[2]
+                    pronunciation = PronunciationOfKanamoji.query(session).filter_by(character=key).first()
+                    kana.pronunciation = pronunciation
+                    session.add(kana)
+            session.commit()
 
 
 class PronunciationOfKanamoji(Base):
@@ -83,13 +84,14 @@ class PronunciationOfKanamoji(Base):
     kanas = relationship('Kana', backref='pronunciation')
 
     @staticmethod
-    def insert_pronunciations(session):
-        pronunciations = [
-            'Seion', 'Dakuon', 'Handakuon', 'Yoon-Seion', 'Yoon-Dakuon', 'Yoon-Handakuon'
-        ]
-        for p in pronunciations:
-            pronunciation = PronunciationOfKanamoji.query.filter_by(character=p).first()
-            if pronunciation is None:
-                pronunciation = PronunciationOfKanamoji(character=p)
-            session.add(pronunciation)
-        session.commit()
+    def insert_pronunciations(db):
+        with db.session as session:
+            pronunciations = [
+                'Seion', 'Dakuon', 'Handakuon', 'Yoon-Seion', 'Yoon-Dakuon', 'Yoon-Handakuon'
+            ]
+            for p in pronunciations:
+                pronunciation = PronunciationOfKanamoji.query(session).filter_by(character=p).first()
+                if pronunciation is None:
+                    pronunciation = PronunciationOfKanamoji(character=p)
+                session.add(pronunciation)
+            session.commit()
