@@ -23,26 +23,39 @@ class Kana(Base):
     def insert_kanas(db):
         kanas = {
             'Seion': [
-                ['あ', 'ア', 'a'], ['い', 'イ', 'i'], ['う', 'ウ', 'u'], ['え', 'エ', 'e'], ['お', 'オ', 'o'],
-                ['か', 'カ', 'ka'], ['け', 'キ', 'ki'], ['く', 'ク', 'ku'], ['け', 'ケ', 'ke'], ['こ', 'コ', 'ko'],
-                ['さ', 'サ', 'sa'], ['し', 'シ', 'shi'], ['す', 'ス', 'su'], ['せ', 'セ', 'se'], ['そ', 'ソ', 'so'],
-                ['た', 'タ', 'ta'], ['ち', 'チ', 'chi'], ['つ', 'ツ', 'tsu'], ['て', 'テ', 'te'], ['と', 'ト', 'to'],
-                ['な', 'ナ', 'na'], ['に', 'ニ', 'ni'], ['ぬ', 'ヌ', 'nu'], ['ね', 'ネ', 'ne'], ['の', 'ノ', 'no'],
-                ['は', 'ハ', 'ha'], ['ひ', 'ヒ', 'hi'], ['ふ', 'フ', 'fu'], ['へ', 'ヘ', 'he'], ['ほ', 'ホ', 'ho'],
-                ['ま', 'マ', 'ma'], ['み', 'ミ', 'mi'], ['む', 'ム', 'mu'], ['め', 'メ', 'me'], ['も', 'モ', 'mo'],
+                ['あ', 'ア', 'a'], ['い', 'イ', 'i'], ['う', 'ウ', 'u'],
+                ['え', 'エ', 'e'], ['お', 'オ', 'o'],
+                ['か', 'カ', 'ka'], ['け', 'キ', 'ki'], ['く', 'ク', 'ku'],
+                ['け', 'ケ', 'ke'], ['こ', 'コ', 'ko'],
+                ['さ', 'サ', 'sa'], ['し', 'シ', 'shi'], ['す', 'ス', 'su'],
+                ['せ', 'セ', 'se'], ['そ', 'ソ', 'so'],
+                ['た', 'タ', 'ta'], ['ち', 'チ', 'chi'], ['つ', 'ツ', 'tsu'],
+                ['て', 'テ', 'te'], ['と', 'ト', 'to'],
+                ['な', 'ナ', 'na'], ['に', 'ニ', 'ni'], ['ぬ', 'ヌ', 'nu'],
+                ['ね', 'ネ', 'ne'], ['の', 'ノ', 'no'],
+                ['は', 'ハ', 'ha'], ['ひ', 'ヒ', 'hi'], ['ふ', 'フ', 'fu'],
+                ['へ', 'ヘ', 'he'], ['ほ', 'ホ', 'ho'],
+                ['ま', 'マ', 'ma'], ['み', 'ミ', 'mi'], ['む', 'ム', 'mu'],
+                ['め', 'メ', 'me'], ['も', 'モ', 'mo'],
                 ['や', 'ヤ', 'ya'], ['ゆ', 'ユ', 'yu'], ['よ', 'ヨ', 'yo'],
-                ['ら', 'ラ', 'ra'], ['り', 'リ', 'ri'], ['る', 'ル', 'ru'], ['れ', 'レ', 're'], ['ろ', 'ロ', 'ro'],
+                ['ら', 'ラ', 'ra'], ['り', 'リ', 'ri'], ['る', 'ル', 'ru'],
+                ['れ', 'レ', 're'], ['ろ', 'ロ', 'ro'],
                 ['わ', 'ワ', 'wa'], ['を', 'ヲ', 'wo'],
                 ['ん', 'ン', 'n']
             ],
             'Dakuon': [
-                ['が', 'ガ', 'ga'], ['ぎ', 'ギ', 'gi'], ['ぐ', 'グ', 'gu'], ['げ', 'ゲ', 'ge'], ['ご', 'ゴ', 'go'],
-                ['ざ', 'ザ', 'za'], ['じ', 'ジ', 'ji'], ['ず', 'ズ', 'zu'], ['ぜ', 'ゼ', 'ze'], ['ぞ', 'ゾ', 'zo'],
-                ['だ', 'ダ', 'da'], ['ぢ', 'ヂ', 'di|ji'], ['づ', 'ヅ', 'du|zu'], ['で', 'デ', 'de'], ['ど', 'ド', 'do'],
-                ['ば', 'バ', 'ba'], ['び', 'ビ', 'bi'], ['ぶ', 'ブ', 'bu'], ['べ', 'ベ', 'be'], ['ぼ', 'ボ', 'bo'],
+                ['が', 'ガ', 'ga'], ['ぎ', 'ギ', 'gi'], ['ぐ', 'グ', 'gu'],
+                ['げ', 'ゲ', 'ge'], ['ご', 'ゴ', 'go'],
+                ['ざ', 'ザ', 'za'], ['じ', 'ジ', 'ji'], ['ず', 'ズ', 'zu'],
+                ['ぜ', 'ゼ', 'ze'], ['ぞ', 'ゾ', 'zo'],
+                ['だ', 'ダ', 'da'], ['ぢ', 'ヂ', 'di|ji'], ['づ', 'ヅ', 'du|zu'],
+                ['で', 'デ', 'de'], ['ど', 'ド', 'do'],
+                ['ば', 'バ', 'ba'], ['び', 'ビ', 'bi'], ['ぶ', 'ブ', 'bu'],
+                ['べ', 'ベ', 'be'], ['ぼ', 'ボ', 'bo'],
             ],
             'Handakuon': [
-                ['ぱ', 'パ', 'pa'], ['ぴ', 'ピ', 'pi'], ['ぷ', 'プ', 'pu'], ['ぺ', 'ペ', 'pe'], ['ぽ', 'ポ', 'po'],
+                ['ぱ', 'パ', 'pa'], ['ぴ', 'ピ', 'pi'], ['ぷ', 'プ', 'pu'],
+                ['ぺ', 'ペ', 'pe'], ['ぽ', 'ポ', 'po'],
             ],
             'Yoon-Seion': [
                 ['きゃ', 'キャ', 'kya'], ['きゅ', 'キュ', 'kyu'], ['きょ', 'キョ', 'kyo'],
@@ -71,7 +84,8 @@ class Kana(Base):
                         kana = Kana(hiragana=k[0])
                     kana.katakana = k[1]
                     kana.romaji = k[2]
-                    pronunciation = PronunciationOfKanamoji.query(session).filter_by(character=key).first()
+                    pronunciation = PronunciationOfKanamoji.query(session) \
+                        .filter_by(character=key).first()
                     kana.pronunciation = pronunciation
                     session.add(kana)
             session.commit()
@@ -87,10 +101,12 @@ class PronunciationOfKanamoji(Base):
     def insert_pronunciations(db):
         with db.session as session:
             pronunciations = [
-                'Seion', 'Dakuon', 'Handakuon', 'Yoon-Seion', 'Yoon-Dakuon', 'Yoon-Handakuon'
+                'Seion', 'Dakuon', 'Handakuon',
+                'Yoon-Seion', 'Yoon-Dakuon', 'Yoon-Handakuon'
             ]
             for p in pronunciations:
-                pronunciation = PronunciationOfKanamoji.query(session).filter_by(character=p).first()
+                pronunciation = PronunciationOfKanamoji.query(session) \
+                    .filter_by(character=p).first()
                 if pronunciation is None:
                     pronunciation = PronunciationOfKanamoji(character=p)
                 session.add(pronunciation)

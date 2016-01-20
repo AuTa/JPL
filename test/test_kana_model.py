@@ -9,14 +9,10 @@ from flask import current_app
 
 class KanaModelTestCase(unittest.TestCase):
     def setUp(self):
-        self.app = create_app('testing')
-        self.app_context = self.app.app_context()
-        self.app_context.push()
         self.db = SQLALCHEMY('testing')
         self.db.create_all()
 
     def tearDown(self):
-        self.app_context.pop()
         self.db.drop_all()
 
     def test_pronun(self):

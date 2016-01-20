@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}JPL-Kana{% endblock %}
+
+{% block styles %}
+{{ super() }}
+<style>
+    td.selected{
+    background-color: #66ccff
+    }
+    td.hover{
+    background-color: red
+    }
+    td.sel-but{
+    }
+
+
+</style>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script type="text/javascript">
+$(".kana").click(function () {
+    $(this).toggleClass("selected");
+  });
+$(".kana").hover(function () {
+    $(this).toggleClass("hover");
+    }, function () {
+    $(this).toggleClass("hover");
+  });
+
+$(".sel-but[data-cell!='0'][data-row='0']").click(function () {
+    var i = $(this).data("cell");
+    $(".kana[data-cell='"+i+"'][data-row!='0']").toggleClass("selected");
+  });
+$(".sel-but[data-cell='0'][data-row!='0']").click(function () {
+    var i = $(this).data("row");
+    $(".kana[data-cell!='0'][data-row='"+i+"']").toggleClass("selected");
+  });
+$(".sel-but[data-cell='0'][data-row='0']").click(function () {
+    $(".kana").toggleClass("selected");
+  });
+$(".sel-but[data-cell='0'][data-row='0']").dblclick(function () {
+    $(".kana").addClass("selected");
+  });
+
+<!--$(".kana").hover(function () {-->
+    <!--$(this).toggleClass("hover");-->
+    <!--}, function () {-->
+    <!--$(this).toggleClass("hover");-->
+  <!--});-->
+</script>
+{% endblock %}
+
+
+{% block page_content %}
+<table class="table table-bordered">
+    <caption style="text-align: center">清音-片假名</caption>
+    <colgroup>
+        <col style="width:8px;">
+        <col style>
+        <col style>
+        <col style>
+        <col style>
+        <col style>
+    </colgroup>
+    {% set x = 0 %}
+    {% set y = 0 %}
+    <tr>
+        <td class="sel-but" data-row="0" data-cell="0"></td>
+        <td class="sel-but" data-row="0" data-cell="1"></td>
+        <td class="sel-but" data-row="0" data-cell="2"></td>
+        <td class="sel-but" data-row="0" data-cell="3"></td>
+        <td class="sel-but" data-row="0" data-cell="4"></td>
+        <td class="sel-but" data-row="0" data-cell="5"></td>
+    </tr>
+    {% for i in seion %}
+        {% set x = x + 1 %}
+        <tr>
+            <td class="sel-but" data-row="{{ x }}" data-cell="{{ y }}"></td>
+            {% for j in i %}
+                {% set y = y + 1 %}
+                {% if j != None %}
+                    <td align="center" class="kana selected" data-row="{{ x }}" data-cell="{{ y }}">
+                        <strong>{{ j[0] }}</strong>
+                        <span class="label label-default" style="width: 50%;display: block">{{ j[2] }}</span>
+                    </td>
+                {% else %}
+                    <td align="center"></td>
+                {% endif %}
+            {% endfor %}
+        {% set y = 0 %}
+        </tr>
+    {% endfor %}
+</table>
+<p>Move the mouse over a paragraph.</p>
+{% endblock %}
