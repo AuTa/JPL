@@ -4,95 +4,105 @@
 
 {% block styles %}
 {{ super() }}
-<style>
-    td.selected{
-    background-color: #66ccff
-    }
-    td.hover{
-    background-color: red
-    }
-    td.sel-but{
-    }
-
-
-</style>
+<link href=".\static\main.css" rel="stylesheet">
 {% endblock %}
 
 {% block scripts %}
 {{ super() }}
-<script type="text/javascript">
-$(".kana").click(function () {
-    $(this).toggleClass("selected");
-  });
-$(".kana").hover(function () {
-    $(this).toggleClass("hover");
-    }, function () {
-    $(this).toggleClass("hover");
-  });
-
-$(".sel-but[data-cell!='0'][data-row='0']").click(function () {
-    var i = $(this).data("cell");
-    $(".kana[data-cell='"+i+"'][data-row!='0']").toggleClass("selected");
-  });
-$(".sel-but[data-cell='0'][data-row!='0']").click(function () {
-    var i = $(this).data("row");
-    $(".kana[data-cell!='0'][data-row='"+i+"']").toggleClass("selected");
-  });
-$(".sel-but[data-cell='0'][data-row='0']").click(function () {
-    $(".kana").toggleClass("selected");
-  });
-$(".sel-but[data-cell='0'][data-row='0']").dblclick(function () {
-    $(".kana").addClass("selected");
-  });
-
-<!--$(".kana").hover(function () {-->
-    <!--$(this).toggleClass("hover");-->
-    <!--}, function () {-->
-    <!--$(this).toggleClass("hover");-->
-  <!--});-->
-</script>
+<script src=".\static\main.js"></script>
 {% endblock %}
 
 
 {% block page_content %}
-<table class="table table-bordered">
-    <caption style="text-align: center">清音-片假名</caption>
+{% macro kana_table(character, hiragana) %}
+  <table class="table table-bordered"
+         data-character="{{ character }}" data-hiragana="{{ hiragane }}">
+    {% set kana_index = [] %}
+    {% if character == 'Seion' %}
+      {{ kana_index.extend(kana['Seion'])|default("", True) }}
+      {% if hiragana == 0 %}
+        <caption style="text-align: center">清音-片假名</caption>
+      {% else %}
+        <caption style="text-align: center">清音-平假名</caption>
+      {% endif %}
+    {% elif character == 'Dakuon' %}
+      {{ kana_index.extend(kana['Dakuon'])|default("", True) }}
+      {{ kana_index.extend(kana['Handakuon'])|default("", True) }}
+      {% if hiragana == 0 %}
+        <caption style="text-align: center">浊音-片假名</caption>
+      {% else %}
+        <caption style="text-align: center">浊音-平假名</caption>
+      {% endif %}
+    {% elif character == 'Yoon-Seion' %}
+      {{ kana_index.extend(kana['Yoon-Seion'])|default("", True) }}
+      {{ kana_index.extend(kana['Yoon-Dakuon'])|default("", True) }}
+      {{ kana_index.extend(kana['Yoon-Handakuon'])|default("", True) }}
+      {% if hiragana == 0 %}
+        <caption style="text-align: center">拗音-片假名</caption>
+      {% else %}
+        <caption style="text-align: center">拗音-平假名</caption>
+      {% endif %}
+    {% endif %}
     <colgroup>
-        <col style="width:8px;">
-        <col style>
-        <col style>
-        <col style>
-        <col style>
-        <col style>
+      <col style="width:8px;">
+      {% for row in range(kana_index[0]|length) %}
+      <col>
+      {% endfor %}
     </colgroup>
     {% set x = 0 %}
     {% set y = 0 %}
     <tr>
-        <td class="sel-but" data-row="0" data-cell="0"></td>
-        <td class="sel-but" data-row="0" data-cell="1"></td>
-        <td class="sel-but" data-row="0" data-cell="2"></td>
-        <td class="sel-but" data-row="0" data-cell="3"></td>
-        <td class="sel-but" data-row="0" data-cell="4"></td>
-        <td class="sel-but" data-row="0" data-cell="5"></td>
+      {% for row in range(kana_index[0]|length + 1) %}
+      <td class="sel-but" data-row="0" data-cell="{{ row }}"></td>
+      {% endfor %}
     </tr>
-    {% for i in seion %}
-        {% set x = x + 1 %}
-        <tr>
-            <td class="sel-but" data-row="{{ x }}" data-cell="{{ y }}"></td>
-            {% for j in i %}
-                {% set y = y + 1 %}
-                {% if j != None %}
-                    <td align="center" class="kana selected" data-row="{{ x }}" data-cell="{{ y }}">
-                        <strong>{{ j[0] }}</strong>
-                        <span class="label label-default" style="width: 50%;display: block">{{ j[2] }}</span>
-                    </td>
-                {% else %}
-                    <td align="center"></td>
-                {% endif %}
-            {% endfor %}
+    {% for i in kana_index %}
+      {% set x = x + 1 %}
+      <tr>
+        <td class="sel-but" data-row="{{ x }}" data-cell="{{ y }}"></td>
+        {% for j in i %}
+            {% set y = y + 1 %}
+            {% if j != None %}
+                <td align="center" class="kana selected" data-row="{{ x }}" data-cell="{{ y }}">
+                    <strong>{{ j[hiragana] }}</strong>
+                    <span class="label label-default" style="width: 75%;display: block">
+                      {% if '|' in j[2] %}
+                      {{ j[2].split('|')[0] }}
+                      {% else %}
+                      {{ j[2] }}
+                      {% endif %}
+                    </span>
+                </td>
+            {% else %}
+                <td align="center"></td>
+            {% endif %}
+        {% endfor %}
         {% set y = 0 %}
-        </tr>
+      </tr>
     {% endfor %}
-</table>
-<p>Move the mouse over a paragraph.</p>
+  </table>
+{% endmacro %}
+
+{% for i in ['Seion', 'Dakuon', 'Yoon-Seion'] %}
+  <ul id="{{ i }}" class="nav nav-tabs visible-xs">
+    <li class="active">
+      <a href="{{ '#{0}-0'.format(i) }}" data-toggle="tab">
+        片假名
+      </a>
+    </li>
+    <li class="dropdown">
+      <a href="{{ '#{0}-1'.format(i) }}" data-toggle="tab">
+        平假名
+      </a>
+    </li>
+  </ul>
+  <div class="row tab-content">
+    <div class="col-lg-6 tab-pane active" id="{{ '{0}-0'.format(i) }}">
+      {{ kana_table(i, 0) }}
+    </div>
+    <div class="col-lg-6 tab-pane" id="{{ '{0}-1'.format(i) }}">
+      {{ kana_table(i, 1) }}
+    </div>
+  </div>
+{% endfor %}
 {% endblock %}
