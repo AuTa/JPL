@@ -2,18 +2,11 @@
 
 from flask import Blueprint, render_template, redirect, url_for, request, flash, session
 from app.models import Kana, PronunciationOfKanamoji
-from app import db, nav
+from app import db
 from flask_nav.elements import Navbar, View
 
 kana = Blueprint('kana', __name__)
 
-
-@nav.navigation()
-def mynavbar():
-    return Navbar(
-        'JPL',
-        View('Kana', 'kana.index')
-    )
 
 
 @kana.route('/')

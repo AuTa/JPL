@@ -1,21 +1,46 @@
 {% extends "base.html" %}
 
 {% block title %}JPL-Kana{% endblock %}
+{% set active_page = "kana" %}
 
 {% block styles %}
 {{ super() }}
-<link href=".\static\main.css" rel="stylesheet">
+<link href="./static/main.css" rel="stylesheet">
 {% endblock %}
 
 {% block scripts %}
 {{ super() }}
-<script src=".\static\main.js"></script>
+<script src="./static/main.js"></script>
 {% endblock %}
 
 
 {% block page_content %}
+{% for i in ['Seion', 'Dakuon', 'Yoon-Seion'] %}
+  <ul id="{{ i }}" class="nav nav-tabs visible-xs">
+    <li class="active">
+      <a href="{{ '#{0}-0'.format(i) }}" data-toggle="tab">
+        片假名
+      </a>
+    </li>
+    <li class="dropdown">
+      <a href="{{ '#{0}-1'.format(i) }}" data-toggle="tab">
+        平假名
+      </a>
+    </li>
+  </ul>
+  <div class="ui grid">
+    <div class="eight wide column" id="{{ '{0}-0'.format(i) }}">
+      {{ kana_table(i, 0) }}
+    </div>
+    <div class="eight wide column" id="{{ '{0}-1'.format(i) }}">
+      {{ kana_table(i, 1) }}
+    </div>
+  </div>
+{% endfor %}
+{% endblock %}
+
 {% macro kana_table(character, hiragana) %}
-  <table class="table table-bordered"
+  <table class="ui celled table"
          data-character="{{ character }}" data-hiragana="{{ hiragane }}">
     {% set kana_index = [] %}
     {% if character == 'Seion' %}
@@ -58,12 +83,12 @@
     </tr>
     {% for i in kana_index %}
       {% set x = x + 1 %}
-      <tr>
+      <tr class="center aligned">
         <td class="sel-but" data-row="{{ x }}" data-cell="{{ y }}"></td>
         {% for j in i %}
             {% set y = y + 1 %}
             {% if j != None %}
-                <td align="center" class="kana selected" data-row="{{ x }}" data-cell="{{ y }}">
+                <td class="kana positive" data-row="{{ x }}" data-cell="{{ y }}">
                     <strong>{{ j[hiragana] }}</strong>
                     <span class="label label-default" style="width: 75%;display: block">
                       {% if '|' in j[2] %}
@@ -74,7 +99,7 @@
                     </span>
                 </td>
             {% else %}
-                <td align="center"></td>
+                <td></td>
             {% endif %}
         {% endfor %}
         {% set y = 0 %}
@@ -82,27 +107,3 @@
     {% endfor %}
   </table>
 {% endmacro %}
-
-{% for i in ['Seion', 'Dakuon', 'Yoon-Seion'] %}
-  <ul id="{{ i }}" class="nav nav-tabs visible-xs">
-    <li class="active">
-      <a href="{{ '#{0}-0'.format(i) }}" data-toggle="tab">
-        片假名
-      </a>
-    </li>
-    <li class="dropdown">
-      <a href="{{ '#{0}-1'.format(i) }}" data-toggle="tab">
-        平假名
-      </a>
-    </li>
-  </ul>
-  <div class="row tab-content">
-    <div class="col-lg-6 tab-pane active" id="{{ '{0}-0'.format(i) }}">
-      {{ kana_table(i, 0) }}
-    </div>
-    <div class="col-lg-6 tab-pane" id="{{ '{0}-1'.format(i) }}">
-      {{ kana_table(i, 1) }}
-    </div>
-  </div>
-{% endfor %}
-{% endblock %}

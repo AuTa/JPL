@@ -2,14 +2,10 @@
 import os
 from flask import Flask
 from flask_moment import Moment
-from flask_bootstrap import Bootstrap
 from database import SQLALCHEMY
-from flask_nav import Nav
 
 moment = Moment()
-bootstrap = Bootstrap()
 db = SQLALCHEMY()
-nav = Nav()
 
 
 def create_app(config_name):
@@ -23,8 +19,6 @@ def create_app(config_name):
     app.config.from_envvar('APP_CONFIG_FILE')
 
     moment.init_app(app)
-    bootstrap.init_app(app)
-    nav.init_app(app)
     db.__init__(config_name)
 
     from .views.kana import kana

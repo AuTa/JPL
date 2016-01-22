@@ -8,8 +8,8 @@ td.hover{
 }
 td.sel-but{
 }
-td.selected.hover{
-    background-color: green
+.positive.hover{
+    background: green!important;
 }
 /* 小屏幕（平板，大于等于 768px） */
 @media (min-width: @screen-sm-min) { ... }
