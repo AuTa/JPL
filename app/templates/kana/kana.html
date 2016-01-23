@@ -1,16 +1,16 @@
-{% extends "base.html" %}
+{% extends "./layout.html" %}
 
 {% block title %}JPL-Kana{% endblock %}
 {% set active_page = "kana" %}
 
 {% block styles %}
 {{ super() }}
-<link href="./static/main.css" rel="stylesheet">
+<link href="../static/main.css" rel="stylesheet">
 {% endblock %}
 
 {% block scripts %}
 {{ super() }}
-<script src="./static/main.js"></script>
+<script src="../static/main.js"></script>
 {% endblock %}
 
 
