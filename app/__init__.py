@@ -24,4 +24,7 @@ def create_app(config_name):
     from .views.kana import kana
     app.register_blueprint(kana)
 
+    from .views.errors import errors
+    app.register_blueprint(errors)
+
     return app
