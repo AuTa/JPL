@@ -15,95 +15,91 @@
 
 
 {% block page_content %}
+<main class="HolyGrail-content">
+
 {% for i in ['Seion', 'Dakuon', 'Yoon-Seion'] %}
-  <ul id="{{ i }}" class="nav nav-tabs visible-xs">
-    <li class="active">
-      <a href="{{ '#{0}-0'.format(i) }}" data-toggle="tab">
-        片假名
-      </a>
-    </li>
-    <li class="dropdown">
-      <a href="{{ '#{0}-1'.format(i) }}" data-toggle="tab">
-        平假名
-      </a>
-    </li>
-  </ul>
-  <div class="ui grid">
-    <div class="eight wide column" id="{{ '{0}-0'.format(i) }}">
+  <div class="Grid">
+  <!--<ul id="{{ i }}" class="nav nav-tabs visible-xs">-->
+    <!--<li class="active">-->
+      <!--<a href="{{ '#{0}-0'.format(i) }}" data-toggle="tab">-->
+        <!--片假名-->
+      <!--</a>-->
+    <!--</li>-->
+    <!--<li class="dropdown">-->
+      <!--<a href="{{ '#{0}-1'.format(i) }}" data-toggle="tab">-->
+        <!--平假名-->
+      <!--</a>-->
+    <!--</li>-->
+  <!--</ul>-->
       {{ kana_table(i, 0) }}
-    </div>
-    <div class="eight wide column" id="{{ '{0}-1'.format(i) }}">
       {{ kana_table(i, 1) }}
     </div>
-  </div>
 {% endfor %}
+  </main>
 {% endblock %}
 
 {% macro kana_table(character, hiragana) %}
-  <table class="ui celled table"
+  <div class="Grid-cell u-1of2 Grid column Table"
          data-character="{{ character }}" data-hiragana="{{ hiragane }}">
     {% set kana_index = [] %}
     {% if character == 'Seion' %}
       {{ kana_index.extend(kana['Seion'])|default("", True) }}
       {% if hiragana == 0 %}
-        <caption style="text-align: center">清音-片假名</caption>
+        <div class="Grid-cell caption">清音-片假名</div>
       {% else %}
-        <caption style="text-align: center">清音-平假名</caption>
+        <div class="Grid-cell caption">清音-平假名</div>
       {% endif %}
     {% elif character == 'Dakuon' %}
       {{ kana_index.extend(kana['Dakuon'])|default("", True) }}
       {{ kana_index.extend(kana['Handakuon'])|default("", True) }}
       {% if hiragana == 0 %}
-        <caption style="text-align: center">浊音-片假名</caption>
+        <div class="Grid-cell caption">浊音-片假名</div>
       {% else %}
-        <caption style="text-align: center">浊音-平假名</caption>
+        <div class="Grid-cell caption">浊音-平假名</div>
       {% endif %}
     {% elif character == 'Yoon-Seion' %}
       {{ kana_index.extend(kana['Yoon-Seion'])|default("", True) }}
       {{ kana_index.extend(kana['Yoon-Dakuon'])|default("", True) }}
       {{ kana_index.extend(kana['Yoon-Handakuon'])|default("", True) }}
       {% if hiragana == 0 %}
-        <caption style="text-align: center">拗音-片假名</caption>
+        <div class="Grid-cell caption">拗音-片假名</div>
       {% else %}
-        <caption style="text-align: center">拗音-平假名</caption>
+        <div class="Grid-cell caption">拗音-平假名</div>
       {% endif %}
     {% endif %}
-    <colgroup>
-      <col style="width:8px;">
-      {% for row in range(kana_index[0]|length) %}
-      <col>
-      {% endfor %}
-    </colgroup>
     {% set x = 0 %}
     {% set y = 0 %}
-    <tr>
+    <div class="Grid-cell Grid column tbody">
+    <div class="Grid-cell Grid">
       {% for row in range(kana_index[0]|length + 1) %}
-      <td class="sel-but" data-row="0" data-cell="{{ row }}"></td>
+      <div class="sel-but Grid-cell{% if row == 0 %} nogrow border-left{% endif %} border-top border-right border-bottom"
+           data-row="0" data-cell="{{ row }}"></div>
       {% endfor %}
-    </tr>
+    </div>
     {% for i in kana_index %}
       {% set x = x + 1 %}
-      <tr class="center aligned">
-        <td class="sel-but" data-row="{{ x }}" data-cell="{{ y }}"></td>
+      <div class="Grid-cell Grid">
+        <div class="sel-but Grid-cell nogrow border-left border-right border-bottom" data-row="{{ x }}" data-cell="{{ y }}"></div>
         {% for j in i %}
             {% set y = y + 1 %}
-            {% if j != None %}
-                <td class="kana positive" data-row="{{ x }}" data-cell="{{ y }}">
-                    <strong>{{ j[hiragana] }}</strong>
-                    <span class="label label-default" style="width: 75%;display: block">
+                <div class="kana Grid-cell Grid column border-right border-bottom" data-row="{{ x }}" data-cell="{{ y }}">
+                    <div class="Grid-cell kanamoji ">
+                      {% if j != None %}{{ j[hiragana] }}{% else %}&nbsp;{% endif %}
+                    </div>
+                    <div class="Grid-cell romaji">
+                      {% if j != None %}
                       {% if '|' in j[2] %}
                       {{ j[2].split('|')[0] }}
                       {% else %}
                       {{ j[2] }}
                       {% endif %}
-                    </span>
-                </td>
-            {% else %}
-                <td></td>
-            {% endif %}
+                      {% endif %}
+                    </div>
+                </div>
         {% endfor %}
         {% set y = 0 %}
-      </tr>
+      </div>
     {% endfor %}
-  </table>
+      </div>
+  </div>
 {% endmacro %}

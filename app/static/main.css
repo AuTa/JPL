@@ -1,15 +1,169 @@
-/* 超小屏幕（手机，小于 768px） */
-/* 没有任何媒体查询相关的代码，因为这在 Bootstrap 中是默认的（还记得 Bootstrap 是移动设备优先的吗？） */
-td.selected{
-    background-color: #66ccff
+html, body {
+  margin: 0px;
+  padding: 0px;
+  font-size: 14px;
+  font-family: "SF UI Display", ".PingFang SC", "PingFang SC", "Neue Haas Grotesk Text Pro", "Arial Nova", "ヒラギノ角ゴ ProN W3", "Hiragino Kaku Gothic ProN", "游ゴシック", YuGothic, メイリオ, Meiryo, "Segoe UI", "Microsoft JhengHei", "Microsoft YaHei", "Helvetica Neue", "Source Han Sans SC", "Noto Sans CJK SC", "Source Han Sans CN", "Noto Sans SC", "Source Han Sans TC", "Noto Sans CJK TC", "Helvetica", "Hiragino Sans GB", sans-serif;
 }
-td.hover{
-    background-color: red
+
+.HolyGrail {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
 }
-td.sel-but{
+
+header,
+footer {
+  flex: 1;
+  background-color: #1C1C1C;
 }
-.positive.hover{
-    background: green!important;
+
+.Grid-nav {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background-color: #1C1C1C;
+  height: 3rem;
+  text-align: center;
+  margin: auto 1rem;
+}
+
+.Grid-nav .item {
+font-size: 1.5rem;
+padding: 0 0.5rem;vertical-align: text-bottom;}
+
+.Grid-nav .site {width: 4rem;font-size: 2rem;padding: 0 0.5rem;text-align: left;}
+
+a.item:link, a.item:visited {
+  text-decoration:none;
+  color: #BDC0BA;
+}
+
+a.item:hover, a.item:active, a.item.hover, a.item.active {
+  color: #FFFFFF;
+}
+
+
+.HolyGrail-body {
+  display: flex;
+  flex: 1;
+}
+
+.HolyGrail-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.HolyGrail-nav, .HolyGrail-ads, header .Grid-cell {
+  flex: 0 0 3rem;
+}
+
+.HolyGrail-nav {
+  /* 导航放到最左边 */
+  order: -1;
+}
+
+.Grid {
+  display: flex;
+}
+
+.Grid.column {
+  flex-direction: column;
+}
+
+.Grid-cell {
+  flex: 1;
+}
+
+.Grid-cell.u-full {
+  flex: 0 0 100%;
+}
+
+.Grid-cell.u-1of2 {
+  flex: 0 0 50%;
+}
+
+.Grid-cell.u-1of3 {
+  flex: 0 0 33.3333%;
+}
+
+.Grid-cell.u-1of4 {
+  flex: 0 0 25%;
+}
+
+.Grid-cell.nogrow {
+  flex: 0;
+}
+
+.Table {
+  text-align: center;
+  /* padding: 1rem; */
+}
+
+.tbody {
+  margin: 1rem;
+}
+.Table .caption {
+  margin-top: 1rem;
+  font-size: 1.5rem;
+}
+
+.sel-but {
+  min-width: 0.5rem;
+  min-height: 0.5rem;
+}
+
+.kana {/* height: 3rem; */}
+
+.romaji {
+  font-size: 1rem;
+  background-color: #eee;
+}
+
+.kanamoji {
+  font-size: 1.5rem;
+}
+
+.border-top{
+  border-top-style: solid;
+  border-width: thin;
+  border-color: #ccc;
+}
+.border-right {
+  border-right-style: solid;
+  border-width: thin;
+  border-color: #ccc;
+}
+.border-bottom {
+  border-bottom-style: solid;
+  border-width: thin;
+  border-color: #ccc;
+}
+.border-left {
+  border-left-style: solid;
+  border-width: thin;
+  border-color: #ccc;
+}
+
+.selected {
+  background-color: #A5DEE4;/* 瓶覗 */
+}
+.selected .romaji {
+  background-color: #81C7D4;/* 水 */
+}
+.hover {
+  background-color: #F8C3CD;/* 退红 */
+}
+.hover .romaji {
+  background: #FEDFE1;/* 樱 */
+}
+.sel-but {
+}
+.selected.hover {
+  background: #33A6B8;
+}
+.selected.hover .romaji {
+  background: #6699A1;/* 錆浅葱 */
 }
 /* 小屏幕（平板，大于等于 768px） */
 @media (min-width: @screen-sm-min) { ... }

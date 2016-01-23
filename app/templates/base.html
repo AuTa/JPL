@@ -1,36 +1,39 @@
 <html>
 <head>
 {% block head %}
+  <meta charset="utf-8">
   <title>{% block title %}{% endblock %}</title>
   {% block styles %}
-  <link rel="stylesheet" type="text/css" href="./static/semantic/dist/semantic.min.css">
   {% endblock %}
   <script src="./static/jquery-2.2.0.min.js"></script>
-  <script src="./static/semantic/dist/semantic.min.js"></script>
   <link rel="shortcut icon" href="{{ url_for('static', filename = 'favicon.ico') }}"
         type="image/x-icon">
   <link rel="icon" href="{{ url_for('static', filename = 'favicon.ico') }}"
         type="image/x-icon">
 {% endblock %}
 </head>
-<body>
+<body class="HolyGrail">
+<header class="Grid">
 {% set navigation_bar = [
     ('/', 'index', 'JPL'),
     ('/', 'kana', 'Kana'),
     ('/about/', 'about', 'About')
 ] -%}
 {% set active_page = active_page|default('index') -%}
-<div class="ui fixed inverted menu">
-  <nav class="ui container" id="navigation">
+  <div class="Grid-cell"></div>
+  <nav class="Grid-nav" id="navigation">
     {% for href, id, caption in navigation_bar %}
-    <a class="item {% if id == active_page %}active{% endif %}" href="{{ href|e }}">
+    <a class="item
+    {% if id == 'index' %}site{% endif %}
+    {% if id == active_page %}active{% endif %}" href="{{ href|e }}">
       {{ caption|e }}
     </a>
     {% endfor %}
   </nav>
-</div>
+  <div class="Grid-cell"></div>
+</header>
 {% block content %}
-<div class="ui container">
+<div class="HolyGrail-body">
     {% for message in get_flashed_messages() %}
     <div class="alert alert-warning">
         <button type="button" class="close" data-dismiss="alert">&times;</button>
@@ -39,7 +42,11 @@
     {% endfor %}
 
     {% block page_content %}{% endblock %}
+    <nav class="HolyGrail-nav">...</nav>
+    <aside class="HolyGrail-ads">...</aside>
 </div>
+
+<footer></footer>
 {% endblock %}
 {% block scripts %}
 {{ moment.include_moment() }}
