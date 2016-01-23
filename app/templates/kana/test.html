@@ -1,0 +1,28 @@
+{% extends "./layout.html" %}
+
+{% block title %}JPL-Kana{% endblock %}
+{% set active_page = "kana" %}
+
+{% block styles %}
+{{ super() }}
+<link href="../static/main.css" rel="stylesheet">
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="./static/main.js"></script>
+{% endblock %}
+
+
+{% block page_content %}
+<main class="HolyGrail-content">
+  <div class="Grid">
+  {% from "./_formhelpers.html" import render_field %}
+    <form method="post" action="">
+        {{ form.hidden_tag() }}
+      {{ form.kanamoji() }}
+            {{ render_field(form.kanamoji, class="form-control", required="required") }}
+    </form>
+  </div>
+</main>
+{% endblock %}

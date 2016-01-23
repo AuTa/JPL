@@ -4,9 +4,9 @@ from flask import Blueprint, render_template, redirect, url_for, request, flash,
 from app.models import Kana, PronunciationOfKanamoji
 from app import db
 from flask_nav.elements import Navbar, View
+from app.forms import KanaForm
 
 kana = Blueprint('kana', __name__)
-
 
 
 @kana.route('/')
@@ -14,38 +14,38 @@ def index():
     kana = {
         'Seion': [
             [['あ', 'ア', 'a'], ['い', 'イ', 'i'], ['う', 'ウ', 'u'],
-            ['え', 'エ', 'e'], ['お', 'オ', 'o']],
+             ['え', 'エ', 'e'], ['お', 'オ', 'o']],
             [['か', 'カ', 'ka'], ['け', 'キ', 'ki'], ['く', 'ク', 'ku'],
-            ['け', 'ケ', 'ke'], ['こ', 'コ', 'ko']],
+             ['け', 'ケ', 'ke'], ['こ', 'コ', 'ko']],
             [['さ', 'サ', 'sa'], ['し', 'シ', 'shi'], ['す', 'ス', 'su'],
-            ['せ', 'セ', 'se'], ['そ', 'ソ', 'so']],
+             ['せ', 'セ', 'se'], ['そ', 'ソ', 'so']],
             [['た', 'タ', 'ta'], ['ち', 'チ', 'chi'], ['つ', 'ツ', 'tsu'],
-            ['て', 'テ', 'te'], ['と', 'ト', 'to']],
+             ['て', 'テ', 'te'], ['と', 'ト', 'to']],
             [['な', 'ナ', 'na'], ['に', 'ニ', 'ni'], ['ぬ', 'ヌ', 'nu'],
-            ['ね', 'ネ', 'ne'], ['の', 'ノ', 'no']],
+             ['ね', 'ネ', 'ne'], ['の', 'ノ', 'no']],
             [['は', 'ハ', 'ha'], ['ひ', 'ヒ', 'hi'], ['ふ', 'フ', 'fu'],
-            ['へ', 'ヘ', 'he'], ['ほ', 'ホ', 'ho']],
+             ['へ', 'ヘ', 'he'], ['ほ', 'ホ', 'ho']],
             [['ま', 'マ', 'ma'], ['み', 'ミ', 'mi'], ['む', 'ム', 'mu'],
-            ['め', 'メ', 'me'], ['も', 'モ', 'mo']],
+             ['め', 'メ', 'me'], ['も', 'モ', 'mo']],
             [['や', 'ヤ', 'ya'], None, ['ゆ', 'ユ', 'yu'], None, ['よ', 'ヨ', 'yo']],
             [['ら', 'ラ', 'ra'], ['り', 'リ', 'ri'], ['る', 'ル', 'ru'],
-            ['れ', 'レ', 're'], ['ろ', 'ロ', 'ro']],
+             ['れ', 'レ', 're'], ['ろ', 'ロ', 'ro']],
             [['わ', 'ワ', 'wa'], None, None, None, ['を', 'ヲ', 'wo']],
             [['ん', 'ン', 'n'], None, None, None, None]
         ],
         'Dakuon': [
             [['が', 'ガ', 'ga'], ['ぎ', 'ギ', 'gi'], ['ぐ', 'グ', 'gu'],
-            ['げ', 'ゲ', 'ge'], ['ご', 'ゴ', 'go']],
+             ['げ', 'ゲ', 'ge'], ['ご', 'ゴ', 'go']],
             [['ざ', 'ザ', 'za'], ['じ', 'ジ', 'ji'], ['ず', 'ズ', 'zu'],
-            ['ぜ', 'ゼ', 'ze'], ['ぞ', 'ゾ', 'zo']],
+             ['ぜ', 'ゼ', 'ze'], ['ぞ', 'ゾ', 'zo']],
             [['だ', 'ダ', 'da'], ['ぢ', 'ヂ', 'di|ji'], ['づ', 'ヅ', 'du|zu'],
-            ['で', 'デ', 'de'], ['ど', 'ド', 'do']],
+             ['で', 'デ', 'de'], ['ど', 'ド', 'do']],
             [['ば', 'バ', 'ba'], ['び', 'ビ', 'bi'], ['ぶ', 'ブ', 'bu'],
-            ['べ', 'ベ', 'be'], ['ぼ', 'ボ', 'bo']],
+             ['べ', 'ベ', 'be'], ['ぼ', 'ボ', 'bo']],
         ],
         'Handakuon': [
             [['ぱ', 'パ', 'pa'], ['ぴ', 'ピ', 'pi'], ['ぷ', 'プ', 'pu'],
-            ['ぺ', 'ペ', 'pe'], ['ぽ', 'ポ', 'po']]
+             ['ぺ', 'ペ', 'pe'], ['ぽ', 'ポ', 'po']]
         ],
         'Yoon-Seion': [
             [['きゃ', 'キャ', 'kya'], ['きゅ', 'キュ', 'kyu'], ['きょ', 'キョ', 'kyo']],
@@ -65,5 +65,13 @@ def index():
         'Yoon-Handakuon': [
             [['ぴゃ', 'ピャ', 'pya'], ['ぴゅ', 'ピュ', 'pyu'], ['ぴょ', 'ピョ', 'pyo']],
         ]
-        }
-    return render_template('kana.html', kana=kana)
+    }
+    return render_template('kana/kana.html', kana=kana)
+
+@kana.route('/test', methods=['GET', 'POST'])
+def test():
+    kanamoji = None
+    form = KanaForm()
+    form.kanamoji(placeholder='Press Space Start.')
+    return render_template('kana/test.html', form=form, kanamoji=kanamoji)
+    
