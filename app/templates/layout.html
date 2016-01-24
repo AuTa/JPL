@@ -5,7 +5,7 @@
   <title>{% block title %}{% endblock %}</title>
   {% block styles %}
   {% endblock %}
-  <script src="./static/jquery-2.2.0.min.js"></script>
+  <script src="../static/jquery-2.2.0.min.js"></script>
   <script>$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};</script>
   <link rel="shortcut icon" href="{{ url_for('static', filename = 'favicon.ico') }}"
         type="image/x-icon">
@@ -18,7 +18,7 @@
 {% set navigation_bar = [
     ('/', 'index', 'JPL'),
     ('/', 'kana', 'Kana'),
-    ('/about/', 'about', 'About')
+    ('/test/', 'test', 'Kana-Test')
 ] -%}
 {% set active_page = active_page|default('index') -%}
   <div class="Grid-cell"></div>

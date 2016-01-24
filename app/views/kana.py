@@ -1,24 +1,81 @@
 # coding: utf-8
 
 from flask import Blueprint, render_template, redirect, url_for, request, flash, session, \
-    jsonify
-from app.models import Kana, PronunciationOfKanamoji
+    jsonify, make_response
+from app.models import Kana, PronunciationOfKanamoji, User, KanaTest
 from app import db
 from flask_nav.elements import Navbar, View
 from app.forms import KanaForm
-
+from datetime import timedelta
+import time
+import hashlib
+import json
+from copy import deepcopy
 kana = Blueprint('kana', __name__)
 
+kana_state = {
+    'Seion': [
+        [[True, True], [True, False], [True, False], [True, False], [True, False]],
+        [[True, False], [True, False], [True, False], [True, False], [True, False]],
+        [[True, False], [True, False], [True, False], [True, False], [True, False]],
+        [[True, False], [True, False], [True, False], [True, False], [True, False]],
+        [[True, False], [True, False], [True, False], [True, False], [True, False]],
+        [[True, False], [True, False], [True, False], [True, False], [True, False]],
+        [[True, False], [True, False], [True, False], [True, False], [True, False]],
+        [[True, False], None, [True, False], None, [True, False]],
+        [[True, False], [True, False], [True, False], [True, False], [True, False]],
+        [[True, False], None, None, None, [True, False]],
+        [[True, False], None, None, None, None]
+    ],
+    'Dakuon': [
+        [[False, False], [False, False], [False, False], [False, False], [False, False]],
+        [[False, False], [False, False], [False, False], [False, False], [False, False]],
+        [[False, False], [False, False], [False, False], [False, False], [False, False]],
+        [[False, False], [False, False], [False, False], [False, False], [False, False]],
+        [[False, False], [False, False], [False, False], [False, False], [False, False]],
+    ],
+    'Yoon-Seion': [
+        [[False, False], [False, False], [False, False]],
+        [[False, False], [False, False], [False, False]],
+        [[False, False], [False, False], [False, False]],
+        [[False, False], [False, False], [False, False]],
+        [[False, False], [False, False], [False, False]],
+        [[False, False], [False, False], [False, False]],
+        [[False, False], [False, False], [False, False]],
+        [[False, False], [False, False], [False, False]],
+        [[False, False], [False, False], [False, False]],
+        [[False, False], [False, False], [False, False]],
+        [[False, False], [False, False], [False, False]],
+        [[False, False], [False, False], [False, False]],
+    ]
+}
 
-# @kana.route('/test/_form_autofocus')
-# def form_autofocus():
-#     autofocus = session.get('placeholder')[1]
-#     return jsonify(autofocus=autofocus)
+
+@kana.route('/_ajax_state')
+def ajax_state():
+    col = request.args.get('col', 0, type=int)
+    row = request.args.get('row', 0, type=int)
+    character = request.args.get('character')
+    hiragana = request.args.get('hiragana', type=int)
+    session_id = request.cookies.get('session_id')
+    with db.session as session:
+        user = User.query(session).filter_by(session_id=session_id).first()
+        kana = deepcopy(user.kana_state)
+        print(kana[character][row])
+        state = kana[character][row][col][hiragana]
+        kana[character][row][col][hiragana] = not state
+        print(user.kana_state[character][row])
+        print( kana == user.kana_state)
+        user.kana_state = kana
+        user.username = time.time()
+        session.add(user)
+        session.commit()
+    return jsonify()
 
 
 @kana.route('/')
 def index():
-    kana = {
+    kanas = {
         'Seion': [
             [['あ', 'ア', 'a'], ['い', 'イ', 'i'], ['う', 'ウ', 'u'],
              ['え', 'エ', 'e'], ['お', 'オ', 'o']],
@@ -73,10 +130,26 @@ def index():
             [['ぴゃ', 'ピャ', 'pya'], ['ぴゅ', 'ピュ', 'pyu'], ['ぴょ', 'ピョ', 'pyo']],
         ]
     }
-    return render_template('kana/kana.html', kana=kana)
+    session_id = request.cookies.get('session_id')
+    global kana_state
+    if session_id is not None:
+        with db.session as session:
+            user = User.query(session).filter_by(session_id=session_id).first()
+            kana_state = user.kana_state
+    resp = make_response(render_template('kana/kana.html', kanas=kanas, kana_state=kana_state))
+    if session_id is None:
+        user_agent = request.headers.get('User-Agent')
+        user_agent_hash = hashlib.md5('{0}{1}'.format(user_agent, time.time()).encode('utf-8'))\
+            .hexdigest()
+        with db.session as session:
+            user = User(session_id=user_agent_hash)
+            session.add(user)
+            session.commit()
+        resp.set_cookie('session_id', user_agent_hash, max_age=timedelta(days=365))
+    return resp
 
 
-@kana.route('/test', methods=['GET', 'POST'])
+@kana.route('/test/', methods=['GET', 'POST'])
 def test():
     form = KanaForm()
     if session.get('placeholder') is not None:

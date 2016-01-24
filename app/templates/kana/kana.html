@@ -11,11 +11,15 @@
 {% block scripts %}
 {{ super() }}
 <script src="../static/main.js"></script>
+<script>
+  var kana_state = {{ kana_state|tojson|safe }}
+</script>
 {% endblock %}
 
 
 {% block page_content %}
 <main class="HolyGrail-content">
+    <input type="button" value="Test" onclick="kana_test()">
 
 {% for i in ['Seion', 'Dakuon', 'Yoon-Seion'] %}
   <div class="Grid">
@@ -40,27 +44,31 @@
 
 {% macro kana_table(character, hiragana) %}
   <div class="Grid-cell u-1of2 Grid column Table"
-         data-character="{{ character }}" data-hiragana="{{ hiragane }}">
+         data-character="{{ character }}" data-hiragana="{{ hiragana }}">
     {% set kana_index = [] %}
+    {% set kana_state_index = [] %}
     {% if character == 'Seion' %}
-      {{ kana_index.extend(kana['Seion'])|default("", True) }}
+      {{ kana_index.extend(kanas['Seion'])|default("", True) }}
+      {{ kana_state_index.extend(kana_state['Seion'])|default("", True) }}
       {% if hiragana == 0 %}
         <div class="Grid-cell caption">清音-片假名</div>
       {% else %}
         <div class="Grid-cell caption">清音-平假名</div>
       {% endif %}
     {% elif character == 'Dakuon' %}
-      {{ kana_index.extend(kana['Dakuon'])|default("", True) }}
-      {{ kana_index.extend(kana['Handakuon'])|default("", True) }}
+      {{ kana_index.extend(kanas['Dakuon'])|default("", True) }}
+      {{ kana_index.extend(kanas['Handakuon'])|default("", True) }}
+      {{ kana_state_index.extend(kana_state['Dakuon'])|default("", True) }}
       {% if hiragana == 0 %}
         <div class="Grid-cell caption">浊音-片假名</div>
       {% else %}
         <div class="Grid-cell caption">浊音-平假名</div>
       {% endif %}
     {% elif character == 'Yoon-Seion' %}
-      {{ kana_index.extend(kana['Yoon-Seion'])|default("", True) }}
-      {{ kana_index.extend(kana['Yoon-Dakuon'])|default("", True) }}
-      {{ kana_index.extend(kana['Yoon-Handakuon'])|default("", True) }}
+      {{ kana_index.extend(kanas['Yoon-Seion'])|default("", True) }}
+      {{ kana_index.extend(kanas['Yoon-Dakuon'])|default("", True) }}
+      {{ kana_index.extend(kanas['Yoon-Handakuon'])|default("", True) }}
+      {{ kana_state_index.extend(kana_state['Yoon-Seion'])|default("", True) }}
       {% if hiragana == 0 %}
         <div class="Grid-cell caption">拗音-片假名</div>
       {% else %}
@@ -73,32 +81,35 @@
     <div class="Grid-cell Grid">
       {% for row in range(kana_index[0]|length + 1) %}
       <div class="sel-but Grid-cell{% if row == 0 %} nogrow border-left{% endif %} border-top border-right border-bottom"
-           data-row="0" data-cell="{{ row }}"></div>
+           data-row="-1" data-col="{{ row - 1 }}"></div>
       {% endfor %}
     </div>
     {% for i in kana_index %}
-      {% set x = x + 1 %}
       <div class="Grid-cell Grid">
-        <div class="sel-but Grid-cell nogrow border-left border-right border-bottom" data-row="{{ x }}" data-cell="{{ y }}"></div>
+        <div class="sel-but Grid-cell nogrow border-left border-right border-bottom" data-row="{{ x  }}" data-col="{{ y - 1 }}"></div>
         {% for j in i %}
-            {% set y = y + 1 %}
-                <div class="kana Grid-cell Grid column border-right border-bottom" data-row="{{ x }}" data-cell="{{ y }}">
-                    <div class="Grid-cell kanamoji ">
-                      {% if j != None %}{{ j[hiragana] }}{% else %}&nbsp;{% endif %}
-                    </div>
-                    <div class="Grid-cell romaji">
-                      {% if j != None %}
-                      {% if '|' in j[2] %}
-                      {{ j[2].split('|')[0] }}
-                      {% else %}
-                      {{ j[2] }}
-                      {% endif %}
-                      {% endif %}
-                    </div>
+          <div class="kana Grid-cell Grid column border-right border-bottom
+            {% if kana_state_index[x][y] == None %} disable
+            {% elif kana_state_index[x][y][hiragana] %} selected {% endif %}"
+                 data-row="{{ x }}" data-col="{{ y }}">
+                <div class="Grid-cell kanamoji ">
+                  {% if j != None %}{{ j[hiragana] }}{% else %}&nbsp;{% endif %}
                 </div>
+                <div class="Grid-cell romaji">
+                  {% if j != None %}
+                    {% if '|' in j[2] %}
+                    {{ j[2].split('|')[0] }}
+                    {% else %}
+                    {{ j[2] }}
+                    {% endif %}
+                  {% endif %}
+                </div>
+            </div>
+          {% set y = y + 1 %}
         {% endfor %}
         {% set y = 0 %}
       </div>
+      {% set x = x + 1 %}
     {% endfor %}
       </div>
   </div>

@@ -1,45 +1,52 @@
-$(".kana").click(function() {
+$(".kana").not(".disable").click(function() {
   $(this).toggleClass("selected");
+  var i = $(this).data("col");
+  var j = $(this).data("row");
+  var character = $(this).parents(".Table").data("character");
+  var hiragana = $(this).parents(".Table").data("hiragana");
+  var state = {"state": [[character, j, i, hiragana]]};
+  console.dir(state);
+  $.getJSON($SCRIPT_ROOT + '/_ajax_state', {"col": i, "row": j, "character": character, "hiragana": hiragana});
 });
 
-$(".kana").hover(function() {
+$(".kana").not(".disable").hover(function() {
   $(this).toggleClass("hover");
 }, function() {
   $(this).toggleClass("hover");
 });
 
 $(".sel-but").click(function() {
-  var i = $(this).data("cell");
+  var i = $(this).data("col");
   var j = $(this).data("row");
-  if (j === 0) {
-    $(this).parents(".Table").find(".kana[data-cell='" + i + "'][data-row!='0']").toggleClass("selected");
+  if (j === -1) {
+    $(this).parents(".Table").find(".kana[data-col='" + i + "'][data-row!='-1']").not(".disable").toggleClass("selected");
   };
-  if (i === 0) {
-    $(this).parents(".Table").find(".kana[data-cell!='0'][data-row='" + j + "']").toggleClass("selected");
+  if (i === -1) {
+    $(this).parents(".Table").find(".kana[data-col!='-1'][data-row='" + j + "']").not(".disable").toggleClass("selected");
   };
 });
 
 $(".sel-but").hover(function() {
-  var i = $(this).data("cell");
+  var i = $(this).data("col");
   var j = $(this).data("row");
-  if (j === 0) {
-    $(this).parents(".Table").find(".kana[data-cell='" + i + "'][data-row!='0']").toggleClass("hover");
+  if (j === -1) {
+    $(this).parents(".Table").find(".kana[data-col='" + i + "'][data-row!='-1']").not(".disable").toggleClass("hover");
   };
-  if (i === 0) {
-    $(this).parents(".Table").find(".kana[data-cell!='0'][data-row='" + j + "']").toggleClass("hover");
+  if (i === -1) {
+    $(this).parents(".Table").find(".kana[data-col!='-1'][data-row='" + j + "']").not(".disable").toggleClass("hover");
   };
 });
 
-$(".sel-but[data-cell='0'][data-row='0']").click(function() {
-  $(this).parents(".Table").find(".kana").toggleClass("selected");
+$(".sel-but[data-col='-1'][data-row='-1']").click(function() {
+  $(this).parents(".Table").find(".kana").not(".disable").toggleClass("selected");
 });
 
-$(".sel-but[data-cell='0'][data-row='0']").hover(function() {
-  $(this).parents(".Table").find(".kana").toggleClass("hover");
+$(".sel-but[data-col='-1'][data-row='-1']").hover(function() {
+  $(this).parents(".Table").find(".kana").not(".disable").toggleClass("hover");
 });
 
-$(".sel-but[data-cell='0'][data-row='0']").dblclick(function() {
-  $(this).parents(".Table").find(".kana").addClass("selected");
+$(".sel-but[data-col='-1'][data-row='-1']").dblclick(function() {
+  $(this).parents(".Table").find(".kana").not(".disable").addClass("selected");
 });
 
 $("form").submit(function(e){
