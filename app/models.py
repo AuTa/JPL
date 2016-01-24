@@ -1,7 +1,7 @@
 # coding: utf-8
 
-from sqlalchemy import Column, Integer, String, Text, PickleType, DateTime, \
-    ForeignKey, Table
+from sqlalchemy import Column, Integer, String, Text, PickleType, DateTime, Boolean, \
+    ForeignKey
 # from app import db
 from database import Base, SQLALCHEMY
 from sqlalchemy.orm import relationship, backref
@@ -15,6 +15,7 @@ class Kana(Base):
     katakana = Column(String)
     romaji = Column(String)
     pronunciation_id = Column(Integer, ForeignKey('pronunciations.id'))
+    kana_tests = relationship('KanaTest', backref='kana')
 
     def __repr__(self):
         return '<Kana {0}>'.format(self.romaji)
@@ -111,3 +112,63 @@ class PronunciationOfKanamoji(Base):
                     pronunciation = PronunciationOfKanamoji(character=p)
                 session.add(pronunciation)
             session.commit()
+
+
+class User(Base):
+    dict_kana_state = {
+        'Seion': [
+            [[True, False], [True, False], [True, False], [True, False], [True, False]],
+            [[True, False], [True, False], [True, False], [True, False], [True, False]],
+            [[True, False], [True, False], [True, False], [True, False], [True, False]],
+            [[True, False], [True, False], [True, False], [True, False], [True, False]],
+            [[True, False], [True, False], [True, False], [True, False], [True, False]],
+            [[True, False], [True, False], [True, False], [True, False], [True, False]],
+            [[True, False], [True, False], [True, False], [True, False], [True, False]],
+            [[True, False], None, [True, False], None, [True, False]],
+            [[True, False], [True, False], [True, False], [True, False], [True, False]],
+            [[True, False], None, None, None, [True, False]],
+            [[True, False], None, None, None, None]
+        ],
+        'Dakuon': [
+            [[False, False], [False, False], [False, False], [False, False], [False, False]],
+            [[False, False], [False, False], [False, False], [False, False], [False, False]],
+            [[False, False], [False, False], [False, False], [False, False], [False, False]],
+            [[False, False], [False, False], [False, False], [False, False], [False, False]],
+            [[False, False], [False, False], [False, False], [False, False], [False, False]],
+        ],
+        'Yoon-Seion': [
+            [[False, False], [False, False], [False, False]],
+            [[False, False], [False, False], [False, False]],
+            [[False, False], [False, False], [False, False]],
+            [[False, False], [False, False], [False, False]],
+            [[False, False], [False, False], [False, False]],
+            [[False, False], [False, False], [False, False]],
+            [[False, False], [False, False], [False, False]],
+            [[False, False], [False, False], [False, False]],
+            [[False, False], [False, False], [False, False]],
+            [[False, False], [False, False], [False, False]],
+            [[False, False], [False, False], [False, False]],
+            [[False, False], [False, False], [False, False]],
+        ]
+    }
+
+    __tablename__ = 'users'
+    id = Column(Integer, primary_key=True)
+    username = Column(String(16))
+    session_id = Column(String, unique=True, index=True)
+    kana_state = Column(PickleType, default=dict_kana_state)
+    kana_tests = relationship('KanaTest', backref='user')
+
+    def __repr__(self):
+        return '<User {0}>'.format(self.username)
+
+
+class KanaTest(Base):
+    __tablename__ = 'kana_tests'
+    id = Column(Integer, primary_key=True)
+    render_time = Column(DateTime)
+    submit_time = Column(DateTime)
+    enter_str = Column(String(4))
+    kana_id = Column(Integer, ForeignKey('kanas.id'))
+    user_id = Column(Integer, ForeignKey('users_id'))
+    result = Column(Boolean)
