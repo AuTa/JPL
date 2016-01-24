@@ -7,6 +7,43 @@ from database import Base, SQLALCHEMY
 from sqlalchemy.orm import relationship, backref
 from datetime import datetime
 
+dict_kana_state = {
+    'Seion': [
+        [[True, False], [True, False], [True, False], [True, False], [True, False]],
+        [[True, False], [True, False], [True, False], [True, False], [True, False]],
+        [[True, False], [True, False], [True, False], [True, False], [True, False]],
+        [[True, False], [True, False], [True, False], [True, False], [True, False]],
+        [[True, False], [True, False], [True, False], [True, False], [True, False]],
+        [[True, False], [True, False], [True, False], [True, False], [True, False]],
+        [[True, False], [True, False], [True, False], [True, False], [True, False]],
+        [[True, False], None, [True, False], None, [True, False]],
+        [[True, False], [True, False], [True, False], [True, False], [True, False]],
+        [[True, False], None, None, None, [True, False]],
+        [[True, False], None, None, None, None]
+    ],
+    'Dakuon': [
+        [[False, False], [False, False], [False, False], [False, False], [False, False]],
+        [[False, False], [False, False], [False, False], [False, False], [False, False]],
+        [[False, False], [False, False], [False, False], [False, False], [False, False]],
+        [[False, False], [False, False], [False, False], [False, False], [False, False]],
+        [[False, False], [False, False], [False, False], [False, False], [False, False]],
+    ],
+    'Yoon-Seion': [
+        [[False, False], [False, False], [False, False]],
+        [[False, False], [False, False], [False, False]],
+        [[False, False], [False, False], [False, False]],
+        [[False, False], [False, False], [False, False]],
+        [[False, False], [False, False], [False, False]],
+        [[False, False], [False, False], [False, False]],
+        [[False, False], [False, False], [False, False]],
+        [[False, False], [False, False], [False, False]],
+        [[False, False], [False, False], [False, False]],
+        [[False, False], [False, False], [False, False]],
+        [[False, False], [False, False], [False, False]],
+        [[False, False], [False, False], [False, False]],
+    ]
+}
+
 
 class Kana(Base):
     __tablename__ = 'kanas'
@@ -115,43 +152,6 @@ class PronunciationOfKanamoji(Base):
 
 
 class User(Base):
-    dict_kana_state = {
-        'Seion': [
-            [[True, False], [True, False], [True, False], [True, False], [True, False]],
-            [[True, False], [True, False], [True, False], [True, False], [True, False]],
-            [[True, False], [True, False], [True, False], [True, False], [True, False]],
-            [[True, False], [True, False], [True, False], [True, False], [True, False]],
-            [[True, False], [True, False], [True, False], [True, False], [True, False]],
-            [[True, False], [True, False], [True, False], [True, False], [True, False]],
-            [[True, False], [True, False], [True, False], [True, False], [True, False]],
-            [[True, False], None, [True, False], None, [True, False]],
-            [[True, False], [True, False], [True, False], [True, False], [True, False]],
-            [[True, False], None, None, None, [True, False]],
-            [[True, False], None, None, None, None]
-        ],
-        'Dakuon': [
-            [[False, False], [False, False], [False, False], [False, False], [False, False]],
-            [[False, False], [False, False], [False, False], [False, False], [False, False]],
-            [[False, False], [False, False], [False, False], [False, False], [False, False]],
-            [[False, False], [False, False], [False, False], [False, False], [False, False]],
-            [[False, False], [False, False], [False, False], [False, False], [False, False]],
-        ],
-        'Yoon-Seion': [
-            [[False, False], [False, False], [False, False]],
-            [[False, False], [False, False], [False, False]],
-            [[False, False], [False, False], [False, False]],
-            [[False, False], [False, False], [False, False]],
-            [[False, False], [False, False], [False, False]],
-            [[False, False], [False, False], [False, False]],
-            [[False, False], [False, False], [False, False]],
-            [[False, False], [False, False], [False, False]],
-            [[False, False], [False, False], [False, False]],
-            [[False, False], [False, False], [False, False]],
-            [[False, False], [False, False], [False, False]],
-            [[False, False], [False, False], [False, False]],
-        ]
-    }
-
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True)
     username = Column(String(16))
