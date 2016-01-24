@@ -170,5 +170,5 @@ class KanaTest(Base):
     submit_time = Column(DateTime)
     enter_str = Column(String(4))
     kana_id = Column(Integer, ForeignKey('kanas.id'))
-    user_id = Column(Integer, ForeignKey('users_id'))
+    user_id = Column(Integer, ForeignKey('users.id'))
     result = Column(Boolean)
