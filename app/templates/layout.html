@@ -6,6 +6,7 @@
   {% block styles %}
   {% endblock %}
   <script src="./static/jquery-2.2.0.min.js"></script>
+  <script>$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};</script>
   <link rel="shortcut icon" href="{{ url_for('static', filename = 'favicon.ico') }}"
         type="image/x-icon">
   <link rel="icon" href="{{ url_for('static', filename = 'favicon.ico') }}"
