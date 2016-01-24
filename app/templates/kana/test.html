@@ -17,11 +17,22 @@
 {% block page_content %}
 <main class="HolyGrail-content">
   <div class="Grid">
+    {{ kanamoji }}{{ render_time }}{{ submit_time }}
   {% from "./_formhelpers.html" import render_field %}
     <form method="post" action="">
-        {{ form.hidden_tag() }}
-      {{ form.kanamoji() }}
-            {{ render_field(form.kanamoji, class="form-control", required="required") }}
+      {{ form.hidden_tag() }}
+      {{ render_field(form.render_time, id="render_time") }}
+      <script>
+        var d = new Date();
+        d_utc = d.toUTCString();
+        document.getElementById("render_time").value = d_utc;
+      </script>
+      {{ render_field(form.submit_time, id="render_time") }}
+      {% if autofocus == 0 %}
+      {{ render_field(form.kanamoji, class_="form-control", required="required", autofocus="autofocus") }}
+      {% else %}
+      {{ render_field(form.kanamoji, class_="form-control", required="required") }}
+      {% endif %}
     </form>
   </div>
 </main>

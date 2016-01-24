@@ -42,10 +42,17 @@ $(".sel-but[data-cell='0'][data-row='0']").dblclick(function() {
   $(this).parents(".Table").find(".kana").addClass("selected");
 });
 
+$("form").submit(function(e){
+  var submit_time = new Date();
+  submit_time_utc = submit_time.toUTCString();
+  document.getElementById("submit_time").value = submit_time_utc;
+});
+
+
 $(document).ready(function() {
     if (window.matchMedia('(min-width: 750px)').matches) {
         $(".tab-pane").addClass("active");
     } else {
         //...
-    }
+    };
 });

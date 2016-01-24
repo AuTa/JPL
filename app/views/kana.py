@@ -1,12 +1,19 @@
 # coding: utf-8
 
-from flask import Blueprint, render_template, redirect, url_for, request, flash, session
+from flask import Blueprint, render_template, redirect, url_for, request, flash, session, \
+    jsonify
 from app.models import Kana, PronunciationOfKanamoji
 from app import db
 from flask_nav.elements import Navbar, View
 from app.forms import KanaForm
 
 kana = Blueprint('kana', __name__)
+
+
+# @kana.route('/test/_form_autofocus')
+# def form_autofocus():
+#     autofocus = session.get('placeholder')[1]
+#     return jsonify(autofocus=autofocus)
 
 
 @kana.route('/')
@@ -68,10 +75,27 @@ def index():
     }
     return render_template('kana/kana.html', kana=kana)
 
+
 @kana.route('/test', methods=['GET', 'POST'])
 def test():
-    kanamoji = None
     form = KanaForm()
-    form.kanamoji(placeholder='Press Space Start.')
-    return render_template('kana/test.html', form=form, kanamoji=kanamoji)
+    if session.get('placeholder') is not None:
+        if session.get('placeholder')[1] == 1:
+            form.kanamoji.label.text = session.get('placeholder')[0]
+            session['placeholder'][1] = 0
+        else:
+            form.kanamoji.label.text = 'Press Space Start'
+            session['placeholder'][1] = 1
+    if form.validate_on_submit():
+        session['kanamoji'] = form.kanamoji.data
+        session['render_time'] = form.render_time.data
+        session['submit_time'] = form.submit_time.data
+        session['placeholder'] = ['Input the Romaji', 1]
+        return redirect(url_for('.test'))
+    return render_template('kana/test.html',
+                           form=form,
+                           kanamoji=session.get('kanamoji'),
+                           render_time = session.get('render_time'),
+                           submit_time = session.get('submit_time'),
+                           autofocus=session.get('placeholder')[1])
     
