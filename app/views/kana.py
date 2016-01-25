@@ -13,42 +13,7 @@ import json
 from copy import deepcopy
 kana = Blueprint('kana', __name__)
 
-kana_state = {
-    'Seion': [
-        [[True, True], [True, False], [True, False], [True, False], [True, False]],
-        [[True, False], [True, False], [True, False], [True, False], [True, False]],
-        [[True, False], [True, False], [True, False], [True, False], [True, False]],
-        [[True, False], [True, False], [True, False], [True, False], [True, False]],
-        [[True, False], [True, False], [True, False], [True, False], [True, False]],
-        [[True, False], [True, False], [True, False], [True, False], [True, False]],
-        [[True, False], [True, False], [True, False], [True, False], [True, False]],
-        [[True, False], None, [True, False], None, [True, False]],
-        [[True, False], [True, False], [True, False], [True, False], [True, False]],
-        [[True, False], None, None, None, [True, False]],
-        [[True, False], None, None, None, None]
-    ],
-    'Dakuon': [
-        [[False, False], [False, False], [False, False], [False, False], [False, False]],
-        [[False, False], [False, False], [False, False], [False, False], [False, False]],
-        [[False, False], [False, False], [False, False], [False, False], [False, False]],
-        [[False, False], [False, False], [False, False], [False, False], [False, False]],
-        [[False, False], [False, False], [False, False], [False, False], [False, False]],
-    ],
-    'Yoon-Seion': [
-        [[False, False], [False, False], [False, False]],
-        [[False, False], [False, False], [False, False]],
-        [[False, False], [False, False], [False, False]],
-        [[False, False], [False, False], [False, False]],
-        [[False, False], [False, False], [False, False]],
-        [[False, False], [False, False], [False, False]],
-        [[False, False], [False, False], [False, False]],
-        [[False, False], [False, False], [False, False]],
-        [[False, False], [False, False], [False, False]],
-        [[False, False], [False, False], [False, False]],
-        [[False, False], [False, False], [False, False]],
-        [[False, False], [False, False], [False, False]],
-    ]
-}
+
 
 
 @kana.route('/_ajax_state')
@@ -57,19 +22,9 @@ def ajax_state():
     row = request.args.get('row', 0, type=int)
     character = request.args.get('character')
     hiragana = request.args.get('hiragana', type=int)
-    session_id = request.cookies.get('session_id')
-    with db.session as session:
-        user = User.query(session).filter_by(session_id=session_id).first()
-        kana = deepcopy(user.kana_state)
-        print(kana[character][row])
-        state = kana[character][row][col][hiragana]
-        kana[character][row][col][hiragana] = not state
-        print(user.kana_state[character][row])
-        print( kana == user.kana_state)
-        user.kana_state = kana
-        user.username = time.time()
-        session.add(user)
-        session.commit()
+    kana = session.get('kana_state')
+    state = kana[character][row][col][hiragana]
+    kana[character][row][col][hiragana] = not state
     return jsonify()
 
 
@@ -130,22 +85,64 @@ def index():
             [['ぴゃ', 'ピャ', 'pya'], ['ぴゅ', 'ピュ', 'pyu'], ['ぴょ', 'ピョ', 'pyo']],
         ]
     }
+    kana_state = {
+        'Seion': [
+            [[True, True], [True, False], [True, False], [True, False], [True, False]],
+            [[True, False], [True, False], [True, False], [True, False], [True, False]],
+            [[True, False], [True, False], [True, False], [True, False], [True, False]],
+            [[True, False], [True, False], [True, False], [True, False], [True, False]],
+            [[True, False], [True, False], [True, False], [True, False], [True, False]],
+            [[True, False], [True, False], [True, False], [True, False], [True, False]],
+            [[True, False], [True, False], [True, False], [True, False], [True, False]],
+            [[True, False], None, [True, False], None, [True, False]],
+            [[True, False], [True, False], [True, False], [True, False], [True, False]],
+            [[True, False], None, None, None, [True, False]],
+            [[True, False], None, None, None, None]
+        ],
+        'Dakuon': [
+            [[False, False], [False, False], [False, False], [False, False], [False, False]],
+            [[False, False], [False, False], [False, False], [False, False], [False, False]],
+            [[False, False], [False, False], [False, False], [False, False], [False, False]],
+            [[False, False], [False, False], [False, False], [False, False], [False, False]],
+            [[False, False], [False, False], [False, False], [False, False], [False, False]],
+        ],
+        'Yoon-Seion': [
+            [[False, False], [False, False], [False, False]],
+            [[False, False], [False, False], [False, False]],
+            [[False, False], [False, False], [False, False]],
+            [[False, False], [False, False], [False, False]],
+            [[False, False], [False, False], [False, False]],
+            [[False, False], [False, False], [False, False]],
+            [[False, False], [False, False], [False, False]],
+            [[False, False], [False, False], [False, False]],
+            [[False, False], [False, False], [False, False]],
+            [[False, False], [False, False], [False, False]],
+            [[False, False], [False, False], [False, False]],
+            [[False, False], [False, False], [False, False]],
+        ]
+    }
     session_id = request.cookies.get('session_id')
-    global kana_state
     if session_id is not None:
-        with db.session as session:
-            user = User.query(session).filter_by(session_id=session_id).first()
+        session['session_id'] = session_id
+        with db.session as dbsession:
+            user = User.query(dbsession).filter_by(session_id=session_id).first()
             kana_state = user.kana_state
+            if session.get('kana_state') != kana_state:
+                kana_state = session.get('kana_state')
+                dbsession.add(user)
+                dbsession.commit()
     resp = make_response(render_template('kana/kana.html', kanas=kanas, kana_state=kana_state))
     if session_id is None:
         user_agent = request.headers.get('User-Agent')
         user_agent_hash = hashlib.md5('{0}{1}'.format(user_agent, time.time()).encode('utf-8'))\
             .hexdigest()
-        with db.session as session:
+        with db.session as dbsession:
             user = User(session_id=user_agent_hash)
-            session.add(user)
-            session.commit()
+            dbsession.add(user)
+            dbsession.commit()
         resp.set_cookie('session_id', user_agent_hash, max_age=timedelta(days=365))
+        session['session_id'] = user_agent_hash
+    session['kana_state'] = kana_state
     return resp
 
 
