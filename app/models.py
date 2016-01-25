@@ -7,43 +7,6 @@ from database import Base, SQLALCHEMY
 from sqlalchemy.orm import relationship, backref
 from datetime import datetime
 
-dict_kana_state = {
-    'Seion': [
-        [[True, False], [True, False], [True, False], [True, False], [True, False]],
-        [[True, False], [True, False], [True, False], [True, False], [True, False]],
-        [[True, False], [True, False], [True, False], [True, False], [True, False]],
-        [[True, False], [True, False], [True, False], [True, False], [True, False]],
-        [[True, False], [True, False], [True, False], [True, False], [True, False]],
-        [[True, False], [True, False], [True, False], [True, False], [True, False]],
-        [[True, False], [True, False], [True, False], [True, False], [True, False]],
-        [[True, False], None, [True, False], None, [True, False]],
-        [[True, False], [True, False], [True, False], [True, False], [True, False]],
-        [[True, False], None, None, None, [True, False]],
-        [[True, False], None, None, None, None]
-    ],
-    'Dakuon': [
-        [[False, False], [False, False], [False, False], [False, False], [False, False]],
-        [[False, False], [False, False], [False, False], [False, False], [False, False]],
-        [[False, False], [False, False], [False, False], [False, False], [False, False]],
-        [[False, False], [False, False], [False, False], [False, False], [False, False]],
-        [[False, False], [False, False], [False, False], [False, False], [False, False]],
-    ],
-    'Yoon-Seion': [
-        [[False, False], [False, False], [False, False]],
-        [[False, False], [False, False], [False, False]],
-        [[False, False], [False, False], [False, False]],
-        [[False, False], [False, False], [False, False]],
-        [[False, False], [False, False], [False, False]],
-        [[False, False], [False, False], [False, False]],
-        [[False, False], [False, False], [False, False]],
-        [[False, False], [False, False], [False, False]],
-        [[False, False], [False, False], [False, False]],
-        [[False, False], [False, False], [False, False]],
-        [[False, False], [False, False], [False, False]],
-        [[False, False], [False, False], [False, False]],
-    ]
-}
-
 
 class Kana(Base):
     __tablename__ = 'kanas'
@@ -156,7 +119,7 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     username = Column(String(16))
     session_id = Column(String, unique=True, index=True)
-    kana_state = Column(PickleType, default=dict_kana_state)
+    kana_state = Column(PickleType)
     kana_tests = relationship('KanaTest', backref='user')
 
     def __repr__(self):
