@@ -2,13 +2,13 @@ $(".kana").not(".disable").click(function() {
   $(this).toggleClass("selected");
   var col = $(this).data("col");
   var row = $(this).data("row");
-  var row_col = [[row, col]]
-  var character = $(this).parents(".Table").data("character");
+  var character = $(this).data("character");
   var hiragana = $(this).parents(".Table").data("hiragana");
+  var chara_row_col_hira = [[character, [row, col, hiragana]]];
   $.ajax({
       url: $SCRIPT_ROOT + '/_ajax_state',
       type: "POST",
-      data: JSON.stringify({"row_col": row_col, "character": character, "hiragana": hiragana}),
+      data: JSON.stringify({"chara_row_col_hira": chara_row_col_hira}),
       contentType: "application/json; charset=utf-8",
     });
 });
@@ -22,33 +22,32 @@ $(".kana").not(".disable").hover(function() {
 $(".sel-but").click(function() {
   var col = $(this).data("col");
   var row = $(this).data("row");
-  var character = $(this).parents(".Table").data("character");
   var hiragana = $(this).parents(".Table").data("hiragana");
   if (row === -1) {
     var sel = $(this).parents(".Table").find(".kana[data-col='" + col + "'][data-row!='-1']").not(".disable");
     sel.toggleClass("selected");
-    var row_col = [];
+    var chara_row_col_hira = [];
     sel.each(function () {
-      row_col.push([$(this).data("row"), col]);
+      chara_row_col_hira.push([$(this).data("character"), [$(this).data("row"), col, hiragana]]);
     });
     $.ajax({
       url: $SCRIPT_ROOT + '/_ajax_state',
       type: "POST",
-      data: JSON.stringify({"row_col": row_col, "character": character, "hiragana": hiragana}),
+      data: JSON.stringify({"chara_row_col_hira": chara_row_col_hira}),
       contentType: "application/json; charset=utf-8",
     });
   };
   if (col === -1) {
     var sel = $(this).parents(".Table").find(".kana[data-col!='-1'][data-row='" + row + "']").not(".disable");
     sel.toggleClass("selected");
-    var row_col = [];
+    var chara_row_col_hira = [];
     sel.each(function () {
-      row_col.push([row, $(this).data("col")]);
+      chara_row_col_hira.push([$(this).data("character"), [row, $(this).data("col"), hiragana]]);
     });
     $.ajax({
       url: $SCRIPT_ROOT + '/_ajax_state',
       type: "POST",
-      data: JSON.stringify({"row_col": row_col, "character": character, "hiragana": hiragana}),
+      data: JSON.stringify({"chara_row_col_hira": chara_row_col_hira}),
       contentType: "application/json; charset=utf-8",
     });
   };
@@ -68,16 +67,16 @@ $(".sel-but").hover(function() {
 $(".sel-but[data-col='-1'][data-row='-1']").click(function() {
   var sel = $(this).parents(".Table").find(".kana").not(".disable");
   sel.toggleClass("selected");
-  var character = $(this).parents(".Table").data("character");
   var hiragana = $(this).parents(".Table").data("hiragana");
-  var row_col = [];
+  var chara_row_col_hira = [];
   sel.each(function () {
-    row_col.push([$(this).data("row"), $(this).data("col")]);
+    chara_row_col_hira.push([$(this).data("character"), [$(this).data("row"), $(this).data("col"), hiragana]]);
   });
+  console.log(chara_row_col_hira)
   $.ajax({
     url: $SCRIPT_ROOT + '/_ajax_state',
     type: "POST",
-    data: JSON.stringify({"row_col": row_col, "character": character, "hiragana": hiragana}),
+    data: JSON.stringify({"chara_row_col_hira": chara_row_col_hira}),
     contentType: "application/json; charset=utf-8",
   });
 });
@@ -88,13 +87,13 @@ $(".sel-but[data-col='-1'][data-row='-1']").hover(function() {
 
 $(".sel-but[data-col='-1'][data-row='-1']").dblclick(function() {
   $(this).parents(".Table").find(".kana").not(".disable").addClass("selected");
-  var character = $(this).parents(".Table").data("character");
+  var character = $(this).data("character").split(",");
   var hiragana = $(this).parents(".Table").data("hiragana");
-  var row_col = [[-1, -1]]
+  var chara_row_col_hira = [null, character, hiragana]
   $.ajax({
     url: $SCRIPT_ROOT + '/_ajax_state',
     type: "POST",
-    data: JSON.stringify({"row_col": row_col, "character": character, "hiragana": hiragana}),
+    data: JSON.stringify({"chara_row_col_hira": chara_row_col_hira}),
     contentType: "application/json; charset=utf-8",
   });
 });

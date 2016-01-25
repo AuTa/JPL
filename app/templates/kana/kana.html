@@ -21,7 +21,7 @@
 <main class="HolyGrail-content">
     <input type="button" value="Test" onclick="kana_test()">
 
-{% for i in ['Seion', 'Dakuon', 'Yoon-Seion'] %}
+{% for i in ['seion', 'dakuon', 'yoon-seion'] %}
   <div class="Grid">
   <!--<ul id="{{ i }}" class="nav nav-tabs visible-xs">-->
     <!--<li class="active">-->
@@ -42,33 +42,29 @@
   </main>
 {% endblock %}
 
-{% macro kana_table(character, hiragana) %}
+{% macro kana_table(character_name, hiragana) %}
   <div class="Grid-cell u-1of2 Grid column Table"
-         data-character="{{ character }}" data-hiragana="{{ hiragana }}">
-    {% set kana_index = [] %}
-    {% set kana_state_index = [] %}
-    {% if character == 'Seion' %}
-      {{ kana_index.extend(kanas['Seion'])|default("", True) }}
-      {{ kana_state_index.extend(kana_state['Seion'])|default("", True) }}
+         data-character="{{ character_name }}" data-hiragana="{{ hiragana }}">
+    {% set seion = ['Seion'] %}
+    {% set dakuon = ['Dakuon', 'Handakuon'] %}
+    {% set yoon_seion = ['Yoon-Seion', 'Yoon-Dakuon', 'Yoon-Handakuon'] %}
+    {% set character = [] %}
+    {% if character_name == 'seion' %}
+      {% set character = seion %}
       {% if hiragana == 0 %}
         <div class="Grid-cell caption">清音-片假名</div>
       {% else %}
         <div class="Grid-cell caption">清音-平假名</div>
       {% endif %}
-    {% elif character == 'Dakuon' %}
-      {{ kana_index.extend(kanas['Dakuon'])|default("", True) }}
-      {{ kana_index.extend(kanas['Handakuon'])|default("", True) }}
-      {{ kana_state_index.extend(kana_state['Dakuon'])|default("", True) }}
+    {% elif character_name == 'dakuon' %}
+      {% set character = dakuon %}
       {% if hiragana == 0 %}
         <div class="Grid-cell caption">浊音-片假名</div>
       {% else %}
         <div class="Grid-cell caption">浊音-平假名</div>
       {% endif %}
-    {% elif character == 'Yoon-Seion' %}
-      {{ kana_index.extend(kanas['Yoon-Seion'])|default("", True) }}
-      {{ kana_index.extend(kanas['Yoon-Dakuon'])|default("", True) }}
-      {{ kana_index.extend(kanas['Yoon-Handakuon'])|default("", True) }}
-      {{ kana_state_index.extend(kana_state['Yoon-Seion'])|default("", True) }}
+    {% elif character_name == 'yoon-seion' %}
+      {% set character = yoon_seion %}
       {% if hiragana == 0 %}
         <div class="Grid-cell caption">拗音-片假名</div>
       {% else %}
@@ -79,19 +75,21 @@
     {% set y = 0 %}
     <div class="Grid-cell Grid column tbody">
     <div class="Grid-cell Grid">
-      {% for row in range(kana_index[0]|length + 1) %}
-      <div class="sel-but Grid-cell{% if row == 0 %} nogrow border-left{% endif %} border-top border-right border-bottom"
-           data-row="-1" data-col="{{ row - 1 }}"></div>
+      {% for col in range(kanas[character[0]][0]|length + 1) %}
+      <div class="sel-but Grid-cell {% if col == 0 %}nogrow border-left{% endif %} border-top border-right border-bottom"
+           data-row="-1" data-col="{{ col - 1 }}"  data-character="{{ ','.join(character) }}"></div>
       {% endfor %}
     </div>
-    {% for i in kana_index %}
+    {% for chara in character %}
+    {% for i in kanas[chara] %}
       <div class="Grid-cell Grid">
-        <div class="sel-but Grid-cell nogrow border-left border-right border-bottom" data-row="{{ x  }}" data-col="{{ y - 1 }}"></div>
+        <div class="sel-but Grid-cell nogrow border-left border-right border-bottom"
+             data-row="{{ x  }}" data-col="{{ y - 1 }}" data-character="{{ chara }}"></div>
         {% for j in i %}
           <div class="kana Grid-cell Grid column border-right border-bottom
-            {% if kana_state_index[x][y] == None %} disable
-            {% elif kana_state_index[x][y][hiragana] %} selected {% endif %}"
-                 data-row="{{ x }}" data-col="{{ y }}">
+            {%- if j == None %} disable
+            {% elif [x, y, hiragana] in kana_state[chara] %} selected {% endif -%}"
+                 data-row="{{ x }}" data-col="{{ y }}"  data-character="{{ chara }}">
                 <div class="Grid-cell kanamoji ">
                   {% if j != None %}{{ j[hiragana] }}{% else %}&nbsp;{% endif %}
                 </div>
@@ -111,6 +109,7 @@
       </div>
       {% set x = x + 1 %}
     {% endfor %}
+      {% endfor %}
       </div>
   </div>
 {% endmacro %}
