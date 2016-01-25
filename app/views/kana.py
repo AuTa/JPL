@@ -16,15 +16,23 @@ kana = Blueprint('kana', __name__)
 
 
 
-@kana.route('/_ajax_state')
+@kana.route('/_ajax_state',methods=['POST'])
 def ajax_state():
-    col = request.args.get('col', 0, type=int)
-    row = request.args.get('row', 0, type=int)
-    character = request.args.get('character')
-    hiragana = request.args.get('hiragana', type=int)
     kana = session.get('kana_state')
-    state = kana[character][row][col][hiragana]
-    kana[character][row][col][hiragana] = not state
+    data = request.get_json()
+    character = data['character']
+    hiragana = data['hiragana']
+    row_col = data['row_col']
+    if row_col == [[-1, -1]]:
+        character_list =  kana[character]
+        for x, i in enumerate(character_list):
+            for y, j in enumerate(i):
+                if j is not None:
+                    kana[character][x][y][hiragana] = True
+    else:
+        for i in row_col:
+            state = kana[character][i[0]][i[1]][hiragana]
+            kana[character][i[0]][i[1]][hiragana] = not state
     return jsonify()
 
 
@@ -87,7 +95,7 @@ def index():
     }
     kana_state = {
         'Seion': [
-            [[True, True], [True, False], [True, False], [True, False], [True, False]],
+            [[True, False], [True, False], [True, False], [True, False], [True, False]],
             [[True, False], [True, False], [True, False], [True, False], [True, False]],
             [[True, False], [True, False], [True, False], [True, False], [True, False]],
             [[True, False], [True, False], [True, False], [True, False], [True, False]],
@@ -127,7 +135,9 @@ def index():
         with db.session as dbsession:
             user = User.query(dbsession).filter_by(session_id=session_id).first()
             kana_state = user.kana_state
-            if session.get('kana_state') != kana_state:
+            if session.get('kana_state') is None:
+                pass
+            elif session.get('kana_state') != kana_state:
                 kana_state = session.get('kana_state')
                 dbsession.add(user)
                 dbsession.commit()
