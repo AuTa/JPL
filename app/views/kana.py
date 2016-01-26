@@ -75,71 +75,55 @@ kana = Blueprint('kana', __name__)
 def ajax_state():
     kana_state = session.get('kana_state')
     data = request.get_json()
-    chara_row_col_hira = data['chara_row_col_hira']
-    # print(chara_row_col_hira[1])
-    # if chara_row_col_hira[0] is None:
-    #     character = chara_row_col_hira[1]
-    #     hiragana = int(chara_row_col_hira[2])
-    #     for i in character:
-    #         kana_state[i] = \
-    #             [[x, z, hiragana] for x, y in enumerate(kanas[i]) for z in range(len(y))]
-    for i in chara_row_col_hira:
+    kanamoji = data['kanamoji']
+    for i in kanamoji:
         if i is None:
-            character = chara_row_col_hira[1]
-            hiragana = int(chara_row_col_hira[2])
-            for j in character:
-                kana_state[j] = \
-                    [[x, z, hiragana] for x, y in enumerate(kanas[j]) for z in range(len(y))]
+            kanamoji.remove(i)
+            for j in kanamoji:
+                if j not in kana_state:
+                    kana_state.append(j)
             break
         else:
-            character = i[0]
-            row_col_hira = i[1]
-            if row_col_hira in kana_state[character]:
-                kana_state[character].remove(row_col_hira)
+            if i in kana_state:
+                kana_state.remove(i)
             else:
-                kana_state[character].append(row_col_hira)
+                kana_state.append(i)
+    session['default_state'] = False
     return jsonify()
 
 
 @kana.route('/')
 def index():
 
-    kana_state = {
-        'Seion': [[x, z, 0] for x, y in enumerate(kanas['Seion']) for z in range(len(y))],
-        'Dakuon': [],
-        'Handakuon': [],
-        'Yoon-Seion': [],
-        'Yoon-Dakuon': [],
-        'Yoon-Handakuon': [],
-    }
     session_id = request.cookies.get('session_id')
-    if session_id is not None:
-        session['session_id'] = session_id
-        with db.session as dbsession:
-            user = User.query(dbsession).filter_by(session_id=session_id).first()
-            user_kana_state = user.kana_state
-            if session.get('kana_state') is not None:
-                pass
-            elif session.get('kana_state') != user_kana_state:
-                print(session.get('kana_state'))
-                print(user_kana_state)
-                user.kana_state = session.get('kana_state')
-                dbsession.add(user)
-                dbsession.commit()
+    if session.get('kana_state') is None:
+        session['kana_state'] =  [x[0] for y in kanas['Seion'] for x in y if x is not None]
+        session['default_state'] = True
     resp = make_response(render_template('kana/kana.html', kanas=kanas, kana_state=session.get('kana_state')))
     if session_id is None:
         user_agent = request.headers.get('User-Agent')
         user_agent_hash = hashlib.md5('{0}{1}'.format(user_agent, time.time()).encode('utf-8')) \
             .hexdigest()
-        with db.session as dbsession:
+        with db.session as db_session:
             user = User(session_id=user_agent_hash)
-            user.kana_state = kana_state
-            dbsession.add(user)
-            dbsession.commit()
+            user.kana_state = [x[0] for y in kanas['Seion'] for x in y if x is not None]
+            db_session.add(user)
+            db_session.commit()
             user_kana_state = user.kana_state
         resp.set_cookie('session_id', user_agent_hash, max_age=timedelta(days=365))
         session['session_id'] = user_agent_hash
         session['kana_state'] = user_kana_state
+    if session_id is not None:
+        session['session_id'] = session_id
+        with db.session as db_session:
+            user = User.query(db_session).filter_by(session_id=session_id).first()
+            user_kana_state = user.kana_state
+            if session.get('kana_state') != user_kana_state and \
+               session.get('dafault_state') == False:
+                user.kana_state = session.get('kana_state')
+                db_session.add(user)
+                db_session.commit()
+
     return resp
 
 

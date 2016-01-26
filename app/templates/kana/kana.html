@@ -49,67 +49,62 @@
     {% set dakuon = ['Dakuon', 'Handakuon'] %}
     {% set yoon_seion = ['Yoon-Seion', 'Yoon-Dakuon', 'Yoon-Handakuon'] %}
     {% set character = [] %}
-    {% if character_name == 'seion' %}
-      {% set character = seion %}
-      {% if hiragana == 0 %}
-        <div class="Grid-cell caption">清音-片假名</div>
-      {% else %}
-        <div class="Grid-cell caption">清音-平假名</div>
-      {% endif %}
-    {% elif character_name == 'dakuon' %}
-      {% set character = dakuon %}
-      {% if hiragana == 0 %}
-        <div class="Grid-cell caption">浊音-片假名</div>
-      {% else %}
-        <div class="Grid-cell caption">浊音-平假名</div>
-      {% endif %}
-    {% elif character_name == 'yoon-seion' %}
-      {% set character = yoon_seion %}
-      {% if hiragana == 0 %}
-        <div class="Grid-cell caption">拗音-片假名</div>
-      {% else %}
-        <div class="Grid-cell caption">拗音-平假名</div>
-      {% endif %}
-    {% endif %}
+    <div class="Grid-cell caption Grid column">
+    {%- if character_name == 'seion' -%}
+      {%- set character = seion -%}
+      {%- if hiragana == 0 -%}清音-片假名{%- else -%}清音-平假名{%- endif -%}
+    {%- elif character_name == 'dakuon' -%}
+      {%- set character = dakuon -%}
+      {%- if hiragana == 0 -%}浊音-片假名{%- else -%}浊音-平假名{%- endif -%}
+    {%- elif character_name == 'yoon-seion' -%}
+      {%- set character = yoon_seion -%}
+      {%- if hiragana == 0 -%}拗音-片假名{%- else -%}拗音-平假名{%- endif -%}
+    {% endif -%}
+    </div>
     {% set x = 0 %}
     {% set y = 0 %}
-    <div class="Grid-cell Grid column tbody">
+    <div class="Grid-cell Grid column tbody border-bottom">
+
     <div class="Grid-cell Grid">
       {% for col in range(kanas[character[0]][0]|length + 1) %}
-      <div class="sel-but Grid-cell {% if col == 0 %}nogrow border-left{% endif %} border-top border-right border-bottom"
-           data-row="-1" data-col="{{ col - 1 }}"  data-character="{{ ','.join(character) }}"></div>
+      <div class="sel-but Grid-cell{% if col == 0 %} nogrow border-left{% endif %} border-top border-right"
+           data-row="-1" data-col="{{ col - 1 }}"  data-character="{{ ','.join(character) }}">
+      </div>
       {% endfor %}
+      <div class="Grid-cell nogrow sel-all border-right border-top" data-character="{{ ','.join(character) }}"></div>
     </div>
     {% for chara in character %}
-    {% for i in kanas[chara] %}
-      <div class="Grid-cell Grid">
-        <div class="sel-but Grid-cell nogrow border-left border-right border-bottom"
-             data-row="{{ x  }}" data-col="{{ y - 1 }}" data-character="{{ chara }}"></div>
-        {% for j in i %}
-          <div class="kana Grid-cell Grid column border-right border-bottom
-            {%- if j == None %} disable
-            {% elif [x, y, hiragana] in kana_state[chara] %} selected {% endif -%}"
-                 data-row="{{ x }}" data-col="{{ y }}"  data-character="{{ chara }}">
-                <div class="Grid-cell kanamoji ">
-                  {% if j != None %}{{ j[hiragana] }}{% else %}&nbsp;{% endif %}
-                </div>
-                <div class="Grid-cell romaji">
-                  {% if j != None %}
-                    {% if '|' in j[2] %}
-                    {{ j[2].split('|')[0] }}
-                    {% else %}
-                    {{ j[2] }}
-                    {% endif %}
-                  {% endif %}
-                </div>
-            </div>
-          {% set y = y + 1 %}
-        {% endfor %}
-        {% set y = 0 %}
-      </div>
-      {% set x = x + 1 %}
-    {% endfor %}
+      {% for i in kanas[chara] %}
+        <div class="Grid-cell Grid">
+          <div class="sel-but Grid-cell nogrow border-left border-right border-top"
+               data-row="{{ x  }}" data-col="{{ y - 1 }}" data-character="{{ chara }}"></div>
+          {% for j in i %}
+            <div class="kana Grid-cell Grid column border-right border-top
+              {%- if j == None %} disable
+              {% elif j[hiragana] in kana_state %} selected {% endif -%}"
+                   data-row="{{ x }}" data-col="{{ y }}"  data-character="{{ chara }}">
+                  <div class="Grid-cell kanamoji ">
+                    {%- if j != None %}{{ j[hiragana] }}{% else %}&nbsp;{% endif -%}
+                  </div>
+                  <div class="Grid-cell romaji">
+                    {%- if j != None %}
+                      {%- if '|' in j[2] -%}
+                      {{ j[2].split('|')[0] }}
+                      {%- else -%}
+                      {{ j[2] }}
+                      {%- endif -%}
+                    {%- endif -%}
+                  </div>
+              </div>
+            {% set y = y + 1 %}
+          {% endfor %}
+          {% set y = 0 %}
+          <div class="Grid-cell nogrow sel-all border-right" data-character="{{ ','.join(character) }}"></div>
+        </div>
+        {% set x = x + 1 %}
       {% endfor %}
+    {% endfor %}
+
       </div>
   </div>
 {% endmacro %}

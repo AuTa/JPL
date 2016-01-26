@@ -101,11 +101,20 @@ a.item:hover, a.item:active, a.item.hover, a.item.active {
 }
 
 .tbody {
-  margin: 1rem;
+  margin: 0 1rem 1rem 1rem;
 }
 .Table .caption {
-  margin-top: 1rem;
+  margin: 1rem 1rem 0 1.5rem;
   font-size: 1.5rem;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+.sel-all {
+  min-width: 0.5rem;
+  min-height: 0.5rem;
 }
 
 .sel-but {
