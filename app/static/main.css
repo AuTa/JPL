@@ -55,7 +55,7 @@ a.item:hover, a.item:active, a.item.hover, a.item.active {
 }
 
 .HolyGrail-nav, .HolyGrail-ads, header .Grid-cell {
-  flex: 0 0 3rem;
+  flex: 0 0 10rem;
 }
 
 .HolyGrail-nav {
@@ -97,7 +97,6 @@ a.item:hover, a.item:active, a.item.hover, a.item.active {
 
 .Table {
   text-align: center;
-  /* padding: 1rem; */
 }
 
 .tbody {
@@ -133,6 +132,11 @@ a.item:hover, a.item:active, a.item.hover, a.item.active {
   font-size: 1.5rem;
 }
 
+.border{
+  border-style: solid;
+  border-width: thin;
+  border-color: #ccc;
+}
 .border-top{
   border-top-style: solid;
   border-width: thin;
@@ -174,6 +178,64 @@ a.item:hover, a.item:active, a.item.hover, a.item.active {
 .selected.hover .romaji {
   background: #6699A1;/* 錆浅葱 */
 }
+
+
+.test-board {
+  text-align: center;
+  margin: 3rem 0;
+}
+
+.test-board .panel-header {
+  min-height: 3rem;
+  flex: 0;
+  background-color: #FCFAF2;/* 白练 */
+}
+
+.test-board .panel-body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.test-board .panel-footer {
+  flex: 0;
+  min-height: 3rem;
+  background-color: #FCFAF2;/* 白练 */
+  align-items: stretch;
+  justify-content: center;
+  display: flex;
+}
+
+.prev-kana {
+  font-size: 6rem;
+}
+
+.cur-kana {
+  font-size: 9rem;
+}
+
+.next-kana {
+  font-size: 6rem;
+}
+
+#kana-form {
+  display: flex;
+  flex: 1;
+  margin: 0;
+  align-items: stretch;
+  flex-direction: column;
+}
+
+.form-control {
+  flex: 1;
+  border: 0;
+  background-color: #FCFAF2;
+  text-align: center;
+  font-size: 1.5rem;
+  height: 3rem;
+  width: 0;
+}
+
 /* 小屏幕（平板，大于等于 768px） */
 @media (min-width: @screen-sm-min) { ... }
 

@@ -10,30 +10,37 @@
 
 {% block scripts %}
 {{ super() }}
-<script src="{{ url_for('static', filename='main.js') }}"></script>
+<script src="{{ url_for('static', filename='kana-test.js') }}"></script>
 {% endblock %}
 
 
 {% block page_content %}
 <main class="HolyGrail-content">
-  <div class="Grid">
-    {{ kanamoji }}{{ render_time }}{{ submit_time }}
-  {% from "./_formhelpers.html" import render_field %}
-    <form method="post" action="">
+  <div class="Grid column">
+    <div class="Grid-cell Grid test-board border">
+      <div class="Grid-cell Grid column panel">
+        <div class="Grid-cell panel-header border-bottom"></div>
+        <div class="Grid-cell panel-body prev-kana"><span>{{ display_kana[0] }}</span></div>
+        <div class="Grid-cell panel-footer border-top"></div>
+      </div>
+      <div class="Grid-cell Grid column border-right border-left">
+        <div class="Grid-cell panel-body cur-kana"><span style="font-weight: 500;">{{ display_kana[1] }}</span></div>
+        <div class="Grid-cell panel-footer border-top">
+          {% from "./_formhelpers.html" import render_field %}
+    <form method="post" action="" id="kana-form" onkeydown="if(event.keyCode==13){return false;}">
       {{ form.hidden_tag() }}
-      {{ render_field(form.render_time, id="render_time") }}
-      <script>
-        var d = new Date();
-        d_utc = d.toUTCString();
-        document.getElementById("render_time").value = d_utc;
-      </script>
-      {{ render_field(form.submit_time, id="render_time") }}
-      {% if autofocus == 0 %}
-      {{ render_field(form.kanamoji, class_="form-control", required="required", autofocus="autofocus") }}
-      {% else %}
-      {{ render_field(form.kanamoji, class_="form-control", required="required") }}
-      {% endif %}
-    </form>
+      {{ render_field(form.kanamoji, class_="form-control",
+                      required="required", disabled="disabled", autocomplete="off",
+                      pattern="[A-z]{1,3}", title="1 to 3 Letter") }}
+    </form></div>
+      </div>
+      <div class="Grid-cell Grid column panel">
+        <div class="Grid-cell panel-header border-bottom"></div>
+        <div class="Grid-cell panel-body next-kana"><span>{{ display_kana[1] }}</span></div>
+        <div class="Grid-cell panel-footer border-top"></div>
+      </div>
+    </div>
+    {{ kana_state }}
   </div>
 </main>
 {% endblock %}

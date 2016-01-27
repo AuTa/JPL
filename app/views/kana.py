@@ -6,12 +6,16 @@ from app.models import Kana, PronunciationOfKanamoji, User, KanaTest
 from app import db
 from flask_nav.elements import Navbar, View
 from app.forms import KanaForm
-from datetime import timedelta
+from datetime import timedelta, datetime
 import time
 import hashlib
 import json
 from copy import deepcopy
+import random
+from sqlalchemy import or_
 
+
+GMT_FORMAT = '%a, %d %b %Y %H:%M:%S GMT'
 kanas = {
     'Seion': [
         [['あ', 'ア', 'a'], ['い', 'イ', 'i'], ['う', 'ウ', 'u'],
@@ -71,27 +75,6 @@ kanas = {
 kana = Blueprint('kana', __name__)
 
 
-@kana.route('/_ajax_state', methods=['POST'])
-def ajax_state():
-    kana_state = session.get('kana_state')
-    data = request.get_json()
-    kanamoji = data['kanamoji']
-    for i in kanamoji:
-        if i is None:
-            kanamoji.remove(i)
-            for j in kanamoji:
-                if j not in kana_state:
-                    kana_state.append(j)
-            break
-        else:
-            if i in kana_state:
-                kana_state.remove(i)
-            else:
-                kana_state.append(i)
-    session['default_state'] = False
-    return jsonify()
-
-
 @kana.route('/')
 def index():
 
@@ -117,6 +100,17 @@ def index():
         session['session_id'] = session_id
         with db.session as db_session:
             user = User.query(db_session).filter_by(session_id=session_id).first()
+            if user is None:
+                user_agent = request.headers.get('User-Agent')
+                user_agent_hash = hashlib.md5('{0}{1}'.format(user_agent, time.time()).encode('utf-8')) \
+                    .hexdigest()
+                user = User(session_id=user_agent_hash)
+                user.kana_state = [x[0] for y in kanas['Seion'] for x in y if x is not None]
+                db_session.add(user)
+                db_session.commit()
+                resp.set_cookie('session_id', user_agent_hash, max_age=timedelta(days=365))
+                session['kana_state'] = user.kana_state
+                return resp
             user_kana_state = user.kana_state
             if session.get('kana_state') != user_kana_state and \
                session.get('dafault_state') == False:
@@ -127,36 +121,120 @@ def index():
     return resp
 
 
-@kana.route('/test/', methods=['GET', 'POST'])
+@kana.route('/test/')
 def test():
     session_id = request.cookies.get('session_id')
     if session_id is None:
         return redirect(url_for('.index'))
+    else:
+        with db.session as db_session:
+            user = User.query(db_session).filter_by(session_id=session_id).first()
+            if user is None:
+                return redirect(url_for('.index'))
 
     form = KanaForm()
 
-    if session.get('placeholder') is not None:
-        if session.get('placeholder')[1] == 1:
-            form.kanamoji.label.text = session.get('placeholder')[0]
-            session['placeholder'][1] = 0
-        else:
-            form.kanamoji.label.text = 'Press Space Start'
-            session['placeholder'][1] = 1
+    if session.get('kana_state') is None:
+        with db.session as dbsession:
+            user = User.query(dbsession).filter_by(session_id=session_id).first()
+            session['kana_state'] = user.kana_state
+    else:
+        with db.session as db_session:
+            user = User.query(db_session).filter_by(session_id=session_id).first()
+            user_kana_state = user.kana_state
+            if session.get('kana_state') != user_kana_state and \
+               session.get('dafault_state') == False:
+                user.kana_state = session.get('kana_state')
+                db_session.add(user)
+                db_session.commit()
 
-    kana_state = {}
-    with db.session as dbsession:
-        user = User.query(dbsession).filter_by(session_id=session_id).first()
-        kana_state = user.kana_state
 
-    if form.validate_on_submit():
-        session['kanamoji'] = form.kanamoji.data
-        session['render_time'] = form.render_time.data
-        session['submit_time'] = form.submit_time.data
-        session['placeholder'] = ['Input the Romaji', 1]
-        return redirect(url_for('.test'))
+    session['prev_kana'] = '-'
+    session['cur_kana'] = '-'
+    session['next_kana'] = '-'
+
+
     return render_template('kana/test.html',
                            form=form,
                            kanamoji=session.get('kanamoji'),
-                           render_time=session.get('render_time'),
-                           submit_time=session.get('submit_time'),
-                           autofocus=session.get('placeholder')[1])
+                           kana_state = session.get('kana_state'),
+                           display_kana=[session.get('prev_kana'),
+                                         session.get('cur_kana'),
+                                         session.get('next_kana'),])
+
+
+@kana.route('/_ajax_state', methods=['POST'])
+def ajax_state():
+    kana_state = session.get('kana_state')
+    data = request.get_json()
+    kanamoji = data['kanamoji']
+    for i in kanamoji:
+        if i is None:
+            kanamoji.remove(i)
+            for j in kanamoji:
+                if j not in kana_state:
+                    kana_state.append(j)
+            break
+        else:
+            if i in kana_state:
+                kana_state.remove(i)
+            else:
+                kana_state.append(i)
+    session['default_state'] = False
+    return jsonify()
+
+
+@kana.route('/_ajax_test', methods=['POST'])
+def ajax_test():
+    session_id = request.cookies.get('session_id')
+    kana_state = session.get('kana_state')
+    data = request.get_json()
+    kanamoji = data['kanamoji']
+    print(kanamoji)
+    if kanamoji == 'start':
+        cur_kana = random.choice(kana_state)
+        next_kana = random.choice(kana_state)
+        prev_kana = session.get('cur_kana')
+        session['cur_kana'] = cur_kana
+        session['next_kana'] = next_kana
+        with db.session as db_session:
+            kana = Kana.query(db_session).filter(
+                    or_(Kana.hiragana == cur_kana, Kana.katakana == cur_kana)).first()
+            session['romaji'] = kana.romaji
+    else:
+        render_time = data['render_time']
+        print(render_time)
+        submit_time = data['submit_time']
+        render_time = datetime.strptime(render_time, GMT_FORMAT)
+        submit_time = datetime.strptime(submit_time, GMT_FORMAT)
+        use_time = submit_time - render_time
+        result = False
+        cur_kana = session.get('cur_kana')
+        if kanamoji == session.get('romaji'):
+            result = True
+        with db.session as db_session:
+            user = User.query(db_session).filter_by(session_id=session_id).first()
+            kana = Kana.query(db_session).filter(
+                    or_(Kana.hiragana == cur_kana, Kana.katakana == cur_kana)).first()
+            kanatest = KanaTest(kanamoji=cur_kana)
+            kanatest.use_time = use_time
+            kanatest.submit_time = submit_time
+            kanatest.enter_str = kanamoji
+            kanatest.kana = kana
+            kanatest.user = user
+            kanatest.result = result
+            db_session.add(kanatest)
+            db_session.commit()
+
+        cur_kana = session['next_kana']
+        next_kana = random.choice(kana_state)
+        prev_kana = session.get('cur_kana')
+        session['cur_kana'] = cur_kana
+        session['next_kana'] = next_kana
+        with db.session as db_session:
+            kana = Kana.query(db_session).filter(
+                    or_(Kana.hiragana == cur_kana, Kana.katakana == cur_kana)).first()
+            session['romaji'] = kana.romaji
+    return jsonify(display_kana=[prev_kana,
+                                 session.get('cur_kana'),
+                                 session.get('next_kana'),])
