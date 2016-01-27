@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from sqlalchemy import Column, Integer, String, Text, PickleType, DateTime, Boolean, \
+from sqlalchemy import Column, Integer, String, Text, PickleType, DateTime, Boolean, Interval,\
     ForeignKey
 # from app import db
 from database import Base, SQLALCHEMY
@@ -15,6 +15,7 @@ class Kana(Base):
     katakana = Column(String)
     romaji = Column(String)
     pronunciation_id = Column(Integer, ForeignKey('pronunciations.id'))
+    kana_tests = relationship('KanaTest', backref='kana')
 
     def __repr__(self):
         return '<Kana {0}>'.format(self.romaji)
@@ -118,6 +119,8 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     username = Column(String(16))
     session_id = Column(String, unique=True, index=True)
+    register_time = Column(DateTime)
+    last_time = Column(DateTime)
     kana_state = Column(PickleType)
     kana_tests = relationship('KanaTest', backref='user')
 
@@ -128,9 +131,10 @@ class User(Base):
 class KanaTest(Base):
     __tablename__ = 'kana_tests'
     id = Column(Integer, primary_key=True)
-    render_time = Column(DateTime)
+    use_time = Column(Interval)
     submit_time = Column(DateTime)
     enter_str = Column(String(4))
     kanamoji = Column(String)
+    kana_id = Column(Integer, ForeignKey('kanas.id'))
     user_id = Column(Integer, ForeignKey('users.id'))
     result = Column(Boolean)
