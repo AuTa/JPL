@@ -15,7 +15,6 @@ class Kana(Base):
     katakana = Column(String)
     romaji = Column(String)
     pronunciation_id = Column(Integer, ForeignKey('pronunciations.id'))
-    kana_tests = relationship('KanaTest', backref='kana')
 
     def __repr__(self):
         return '<Kana {0}>'.format(self.romaji)
@@ -132,6 +131,6 @@ class KanaTest(Base):
     render_time = Column(DateTime)
     submit_time = Column(DateTime)
     enter_str = Column(String(4))
-    kana_id = Column(Integer, ForeignKey('kanas.id'))
+    kanamoji = Column(String)
     user_id = Column(Integer, ForeignKey('users.id'))
     result = Column(Boolean)
