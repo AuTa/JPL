@@ -190,7 +190,6 @@ def ajax_test():
     kana_state = session.get('kana_state')
     data = request.get_json()
     kanamoji = data['kanamoji']
-    print(kanamoji)
     if kanamoji == 'start':
         cur_kana = random.choice(kana_state)
         next_kana = random.choice(kana_state)
@@ -203,10 +202,9 @@ def ajax_test():
             session['romaji'] = kana.romaji
     else:
         render_time = data['render_time']
-        print(render_time)
         submit_time = data['submit_time']
-        render_time = datetime.strptime(render_time, GMT_FORMAT)
-        submit_time = datetime.strptime(submit_time, GMT_FORMAT)
+        render_time = datetime.utcfromtimestamp(float(render_time) / 1000)
+        submit_time = datetime.utcfromtimestamp(float(submit_time) / 1000)
         use_time = submit_time - render_time
         result = False
         cur_kana = session.get('cur_kana')

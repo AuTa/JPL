@@ -31,8 +31,8 @@ $(document).bind("keyup", "space", function() {
                 $(".cur-kana span").text(data.display_kana[1]);
                 $(".next-kana span").text(data.display_kana[2]);
                 var d = new Date();
-                d_utc = d.toUTCString();
-                $("#render_time").val(d_utc);
+                d_time = d.getTime();
+                $("#render_time").val(d_time);
 
             },
         });
@@ -43,8 +43,8 @@ $("#kanamoji").keyup( function(event) {
   if(event.keyCode == 13) {
     if($("#kanamoji").val().length < 4 && $("#kanamoji").val().length > 0) {
         var d = new Date();
-        d_utc = d.toUTCString();
-        $("#submit_time").val(d_utc);
+        d_time = d.getTime();
+        $("#submit_time").val(d_time);
         $.ajax({
             url: $SCRIPT_ROOT + '/_ajax_test',
             type: "POST",
@@ -55,8 +55,8 @@ $("#kanamoji").keyup( function(event) {
                 $(".cur-kana span").text(data.display_kana[1]);
                 $(".next-kana span").text(data.display_kana[2]);
                 var d = new Date();
-                d_utc = d.toUTCString();
-                $("#render_time").val(d_utc);
+                d_time = d.getTime();
+                $("#render_time").val(d_time);
                 $("#kanamoji").val("");
             },
         });
