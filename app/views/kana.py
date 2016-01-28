@@ -115,7 +115,7 @@ def index():
 def test():
     session_id = request.cookies.get('session_id')
     form = KanaForm()
-    session['prev_kana'] = '-'
+    prev_kana = '-'
     session['cur_kana'] = '-'
     session['next_kana'] = '-'
     session['result'] = [0, None]
@@ -123,10 +123,10 @@ def test():
     resp = make_response(render_template('kana/test.html',
                                          form=form,
                                          kana_state = session.get('kana_state'),
-                                         display_kana=[session.get('prev_kana'),
+                                         display_kana=[prev_kana,
                                                        session.get('cur_kana'),
                                                        session.get('next_kana')],
-                                         result = session.get('result')[0]))
+                                         score = session.get('result')[0]))
     if session_id is None:
         with db.session as db_session:
             add_user(resp, db_session)
@@ -192,25 +192,34 @@ def ajax_test():
         render_time = datetime.utcfromtimestamp(float(render_time) / 1000)
         submit_time = datetime.utcfromtimestamp(float(submit_time) / 1000)
         use_time = submit_time - render_time
-        result = False
         cur_kana = session.get('cur_kana')
 
         if kanamoji == session.get('romaji'):
-            result = True
+            if session.get('result')[1] == True:
+                session['result'][0] += 2
+            else:
+                session['result'][0] += 1
+                session['result'][1] = True
+        else:
+            if session.get('result')[1] == False:
+                session['result'][0] -= 2
+            else:
+                session['result'][0] -= 1
+                session['result'][1] = False
 
         with db.session as db_session:
             user = User.query(db_session).filter_by(session_id=session_id).first()
             kana = Kana.query(db_session).filter(
                     or_(Kana.hiragana == cur_kana, Kana.katakana == cur_kana)).first()
-            user_score = user.score or 0
+            user.score = session.get('result')[0]
             kanatest = KanaTest(kanamoji=cur_kana)
             kanatest.use_time = use_time
             kanatest.submit_time = submit_time
             kanatest.enter_str = kanamoji
             kanatest.kana = kana
             kanatest.user = user
-            kanatest.result = result
-            db_session.add(kanatest)
+            kanatest.result = session.get('result')[1]
+            db_session.add(user, kanatest)
             db_session.commit()
 
         cur_kana = session['next_kana']
