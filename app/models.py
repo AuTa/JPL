@@ -121,6 +121,7 @@ class User(Base):
     session_id = Column(String, unique=True, index=True)
     register_time = Column(DateTime)
     last_time = Column(DateTime)
+    score = Column(Integer)
     kana_state = Column(PickleType)
     kana_tests = relationship('KanaTest', backref='user')
 
