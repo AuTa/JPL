@@ -39,9 +39,13 @@ $(document).bind("keyup", "space", function() {
     }
 });
 
+var result = null;
+var round_score = 0;
 $("#kanamoji").keyup( function(event) {
   if(event.keyCode == 13) {
-    if($("#kanamoji").val().length < 4 && $("#kanamoji").val().length > 0) {
+    var patt = new RegExp("[^A-z]");
+    var kana_text = $("#kanamoji").val();
+    if(kana_text.length < 4 && kana_text.length > 0 && !(patt.test(kana_text))) {
         var d = new Date();
         d_time = d.getTime();
         $("#submit_time").val(d_time);
@@ -54,6 +58,22 @@ $("#kanamoji").keyup( function(event) {
                 $(".prev-kana span").text(data.display_kana[0]);
                 $(".cur-kana span").text(data.display_kana[1]);
                 $(".next-kana span").text(data.display_kana[2]);
+                $("#score").text(data.result[0]);
+                if (data.result[1] == true) {
+                    $("#cp").parents(".panel-header").addClass("right");
+                    $("#cp").parents(".panel-header").removeClass("wrong");
+                    $("#cp").text(data.result[2]);
+                    $("#prev_right").text(data.romaji);
+                    $("#prev_wrong").text("");
+                } else {
+                    $("#cp").parents(".panel-header").addClass("wrong");
+                    $("#cp").parents(".panel-header").removeClass("right");
+                    $("#cp").text(data.result[2]);
+                    $("#prev_right").text(data.romaji);
+                    $("#prev_wrong").text(kana_text);
+                };
+                $("#round_score").text(data.result[3])
+                $("#next_kana_count").text(data.next_kana_count)
                 var d = new Date();
                 d_time = d.getTime();
                 $("#render_time").val(d_time);
@@ -62,5 +82,22 @@ $("#kanamoji").keyup( function(event) {
         });
 
 
+  } else {
+//    $("#kanamoji").val("Please input 1 to 3 Letter");
   }}
 });
+
+$(".tabHead").children("div").click(function () {
+    $(this).addClass("active");
+    $(this).siblings().removeClass("active");
+    var tabName = $(this).data("name");
+    var content = $(this).parents(".Tabs").find(".tabContent").children()
+    content.each(function () {
+        if ($(this).data("name") == tabName) {
+            $(this).addClass("active");
+        } else {
+            $(this).removeClass("active");
+        }
+    })
+})
+

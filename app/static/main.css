@@ -15,6 +15,7 @@ header,
 footer {
   /* flex: 1; */
   background-color: #1C1C1C;
+  color: #BDC0BA;
 }
 
 .Grid-nav {
@@ -31,7 +32,11 @@ footer {
 font-size: 1.5rem;
 padding: 0 0.5rem;vertical-align: text-bottom;}
 
-.Grid-nav .site {width: 4rem;font-size: 2rem;padding: 0 0.5rem;text-align: left;}
+.Grid-nav .site {
+width: 4rem;
+font-size: 2rem;
+padding: 0 0.5rem;
+text-align: left;}
 
 a.item:link, a.item:visited {
   text-decoration:none;
@@ -55,7 +60,7 @@ a.item:hover, a.item:active, a.item.hover, a.item.active {
 }
 
 .HolyGrail-nav, .HolyGrail-ads, header .Grid-cell {
-  flex: 0 0 10rem;
+  flex: 0 0 15%;
 }
 
 .HolyGrail-nav {
@@ -189,6 +194,10 @@ a.item:hover, a.item:active, a.item.hover, a.item.active {
   min-height: 3rem;
   flex: 0;
   background-color: #FCFAF2;/* 白练 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
 }
 
 .test-board .panel-body {
@@ -204,6 +213,9 @@ a.item:hover, a.item:active, a.item.hover, a.item.active {
   align-items: stretch;
   justify-content: center;
   display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
 }
 
 .prev-kana {
@@ -229,11 +241,66 @@ a.item:hover, a.item:active, a.item.hover, a.item.active {
 .form-control {
   flex: 1;
   border: 0;
-  background-color: #FCFAF2;
+  background-color: #FCFAF2;/* 白练 */
   text-align: center;
   font-size: 1.5rem;
   height: 3rem;
   width: 0;
+}
+
+.wrong {
+  background-color: #F8C3CD !important;/* 退红 */
+  color: #CB1B45;/* 红 */
+}
+
+.right {
+  background-color: #A8D8B9 !important;/* 白绿 */
+  color: #1B813E;/* 青竹 */
+}
+
+#prev_wrong {
+  color: #CB1B45;/* 红 */
+  text-decoration: underline;
+  font-style: italic;
+  padding: 0 0.5rem;
+}
+
+#prev_right {
+  color: #1B813E;/* 青竹 */
+  padding: 0 0.5rem;
+}
+
+.Tabs {
+}
+
+.tabHead {
+  font-size: 1.5rem;
+}
+
+.tabHead div {
+  padding: 0.2rem 0.5rem;
+}
+
+.tabHead .active {
+  border-style: solid solid none solid;
+  border-width: thin;
+  border-color: #ccc;
+}
+
+.tabContent  > div {
+  display: none;
+  margin: 1rem 0;
+}
+.tabContent .active {
+  display: flex;
+}
+
+.tab-kana {
+  flex: 0 0 5%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: #f9f9f9 solid thin;
 }
 
 /* 小屏幕（平板，大于等于 768px） */
