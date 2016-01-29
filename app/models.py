@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from sqlalchemy import Column, Integer, String, Text, PickleType, DateTime, Boolean, Interval,\
+from sqlalchemy import Column, Integer, String, Text, PickleType, DateTime, Boolean, Interval, \
     ForeignKey
 # from app import db
 from database import Base, SQLALCHEMY
@@ -22,11 +22,11 @@ class Kana(Base):
 
     @staticmethod
     def insert_kanas(db):
-        kanas = {
-            'Seion': [
+        kanas = [
+            ['Seion', [
                 ['あ', 'ア', 'a'], ['い', 'イ', 'i'], ['う', 'ウ', 'u'],
                 ['え', 'エ', 'e'], ['お', 'オ', 'o'],
-                ['か', 'カ', 'ka'], ['け', 'キ', 'ki'], ['く', 'ク', 'ku'],
+                ['か', 'カ', 'ka'], ['き', 'キ', 'ki'], ['く', 'ク', 'ku'],
                 ['け', 'ケ', 'ke'], ['こ', 'コ', 'ko'],
                 ['さ', 'サ', 'sa'], ['し', 'シ', 'shi'], ['す', 'ス', 'su'],
                 ['せ', 'セ', 'se'], ['そ', 'ソ', 'so'],
@@ -43,8 +43,8 @@ class Kana(Base):
                 ['れ', 'レ', 're'], ['ろ', 'ロ', 'ro'],
                 ['わ', 'ワ', 'wa'], ['を', 'ヲ', 'wo'],
                 ['ん', 'ン', 'n']
-            ],
-            'Dakuon': [
+            ]],
+            ['Dakuon', [
                 ['が', 'ガ', 'ga'], ['ぎ', 'ギ', 'gi'], ['ぐ', 'グ', 'gu'],
                 ['げ', 'ゲ', 'ge'], ['ご', 'ゴ', 'go'],
                 ['ざ', 'ザ', 'za'], ['じ', 'ジ', 'ji'], ['ず', 'ズ', 'zu'],
@@ -53,12 +53,12 @@ class Kana(Base):
                 ['で', 'デ', 'de'], ['ど', 'ド', 'do'],
                 ['ば', 'バ', 'ba'], ['び', 'ビ', 'bi'], ['ぶ', 'ブ', 'bu'],
                 ['べ', 'ベ', 'be'], ['ぼ', 'ボ', 'bo'],
-            ],
-            'Handakuon': [
+            ]],
+            ['Handakuon', [
                 ['ぱ', 'パ', 'pa'], ['ぴ', 'ピ', 'pi'], ['ぷ', 'プ', 'pu'],
                 ['ぺ', 'ペ', 'pe'], ['ぽ', 'ポ', 'po'],
-            ],
-            'Yoon-Seion': [
+            ]],
+            ['Yoon-Seion', [
                 ['きゃ', 'キャ', 'kya'], ['きゅ', 'キュ', 'kyu'], ['きょ', 'キョ', 'kyo'],
                 ['しゃ', 'シャ', 'sha'], ['しゅ', 'シュ', 'shu'], ['しょ', 'ショ', 'sho'],
                 ['ちゃ', 'チャ', 'cha'], ['ちゅ', 'チュ', 'chu'], ['ちょ', 'チョ', 'cho'],
@@ -66,27 +66,28 @@ class Kana(Base):
                 ['ひゃ', 'ヒャ', 'hya'], ['ひゅ', 'ヒュ', 'hyu'], ['ひょ', 'ヒョ', 'hyo'],
                 ['みゃ', 'ミャ', 'mya'], ['みゅ', 'ミュ', 'myu'], ['みょ', 'ミョ', 'myo'],
                 ['りゃ', 'リャ', 'rya'], ['りゅ', 'リュ', 'ryu'], ['りょ', 'リョ', 'ryo'],
-            ],
-            'Yoon-Dakuon': [
+            ]],
+            ['Yoon-Dakuon', [
                 ['ぎゃ', 'ギャ', 'gya'], ['ぎゅ', 'ギュ', 'gyu'], ['ぎょ', 'ギョ', 'gyo'],
                 ['じゃ', 'ジャ', 'ja'], ['じゅ', 'ジュ', 'ju'], ['じょ', 'ジョ', 'jo'],
                 ['ぢゃ', 'ヂャ', 'dya|ja'], ['ぢゅ', 'ヂュ', 'dyu|ju'], ['ぢょ', 'ヂョ', 'dyo|jo'],
                 ['びゃ', 'ビャ', 'bya'], ['びゅ', 'ビュ', 'byu'], ['びょ', 'ビョ', 'byo'],
-            ],
-            'Yoon-Handakuon': [
+            ]],
+            ['Yoon-Handakuon', [
                 ['ぴゃ', 'ピャ', 'pya'], ['ぴゅ', 'ピュ', 'pyu'], ['ぴょ', 'ピョ', 'pyo'],
-            ]
-        }
+            ]]
+        ]
         with db.session as session:
-            for key, value in kanas.items():
-                for k in value:
-                    kana = Kana.query(session).filter_by(hiragana=k[0]).first()
+            for i in kanas:
+                character = i[0]
+                for j in i[1]:
+                    kana = Kana.query(session).filter_by(hiragana=j[0]).first()
                     if kana is None:
-                        kana = Kana(hiragana=k[0])
-                    kana.katakana = k[1]
-                    kana.romaji = k[2]
+                        kana = Kana(hiragana=j[0])
+                    kana.katakana = j[1]
+                    kana.romaji = j[2]
                     pronunciation = PronunciationOfKanamoji.query(session) \
-                        .filter_by(character=key).first()
+                        .filter_by(character=character).first()
                     kana.pronunciation = pronunciation
                     session.add(kana)
             session.commit()
