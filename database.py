@@ -52,7 +52,7 @@ class Base(_Base):
         return session.query(cls)
 
 
-def get_engine(config_name=None):
+def get_engine(config_name=None, echo=False):
     """
     Creates engine.
     :param config_name: 配置文件 config_name.py
@@ -60,9 +60,8 @@ def get_engine(config_name=None):
     """
     if config_name == None:
         config_name = 'development'
-    print(config_name)
     uri = config(config_name).SQLALCHEMY_DATABASE_URI
-    _engine = create_engine(uri, echo=True, poolclass=QueuePool)
+    _engine = create_engine(uri, echo=echo, poolclass=QueuePool)
     return _engine
 
 
@@ -71,8 +70,8 @@ class SQLALCHEMY():
     SQLALCHEMY 类.
     获取参数 config_name 创建数据库.
     """
-    def __init__(self, config_name=None):
-        self.engine = get_engine(config_name)
+    def __init__(self, config_name=None, echo=False):
+        self.engine = get_engine(config_name, echo)
         self.Session = sessionmaker(bind=self.engine)
 
     @property
