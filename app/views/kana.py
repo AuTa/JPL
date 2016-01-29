@@ -78,6 +78,7 @@ def add_user(resp, db_session):
         .hexdigest()
     user = User(session_id=user_agent_hash)
     user.kana_state = [x[0] for y in kanas['Seion'] for x in y if x is not None]
+    user.register_time = datetime.utcnow()
     db_session.add(user)
     db_session.commit()
     user_kana_state = user.kana_state
