@@ -15,14 +15,13 @@
 
 
 {% block page_content %}
-<main class="HolyGrail-content">
-  <div class="Grid Grid-cell column">
+<main class="HolyGrail-content" style="display: flex;">
     <div class="Grid test-board border">
       <div class="Grid-cell Grid column panel">
         <div class="Grid-cell panel-header border-bottom">
           <span id="cp">0</span>
         </div>
-        <div class="Grid-cell panel-body prev-kana">
+        <div class="Grid-cell panel-body prev-kana" style="display: flex;">
           <span>{{ display_kana[0] }}</span>
         </div>
         <div class="Grid-cell panel-footer border-top">
@@ -30,7 +29,7 @@
           <span id="prev_wrong"></span>
         </div>
       </div>
-      <div class="Grid-cell Grid column border-right border-left">
+      <div class="Grid-cell border-right border-left">
         <div class="Grid-cell panel-body cur-kana"><span style="font-weight: 500;">{{ display_kana[1] }}</span></div>
         <div class="Grid-cell panel-footer border-top">
           {% from "./_formhelpers.html" import render_field %}
@@ -46,7 +45,9 @@
         <div class="Grid-cell panel-header border-bottom">
           <span id="round_score">0</span>
         </div>
-        <div class="Grid-cell panel-body next-kana"><span>{{ display_kana[2] }}</span></div>
+        <div class="Grid-cell panel-body next-kana" style="display: flex;">
+          <span>{{ display_kana[2] }}</span>
+        </div>
         <div class="Grid-cell panel-footer border-top">
           <span id="next_kana_count"></span>
         </div>
@@ -58,7 +59,7 @@
         <div class="Grid-cell border-bottom active" data-name="tab2">Your Result</div>
         <div class="Grid-cell border-bottom" data-name="tab3">Total Result</div>
       </div>
-      <div class="tabContent Grid-cell Grid column">
+      <div class="tabContent Grid-cell Grid">
         <div class="tab1 Grid-cell Grid"  data-name="tab1" style="flex-wrap: wrap">
           {% set character = ['Seion', 'Dakuon', 'Handakuon', 'Yoon-Seion', 'Yoon-Dakuon', 'Yoon-Handakuon'] %}
           {% for chara in character %}
@@ -87,6 +88,5 @@
         <div class="tab3 Grid-cell"  data-name="tab3">42.</div>
       </div>
     </div>
-  </div>
 </main>
 {% endblock %}

@@ -54,7 +54,7 @@ a.item:hover, a.item:active, a.item.hover, a.item.active {
 }
 
 .HolyGrail-content {
-  display: flex;
+  /* display: flex; */
   flex: 1;
   flex-direction: column;
 }
@@ -201,7 +201,7 @@ a.item:hover, a.item:active, a.item.hover, a.item.active {
 }
 
 .test-board .panel-body {
-  display: flex;
+  /* display: flex; */
   align-items: center;
   justify-content: center;
 }
@@ -275,6 +275,7 @@ a.item:hover, a.item:active, a.item.hover, a.item.active {
 
 .tabHead {
   font-size: 1.5rem;
+  flex: none;
 }
 
 .tabHead div {
