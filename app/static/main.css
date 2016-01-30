@@ -6,7 +6,7 @@ html, body {
 }
 
 .HolyGrail {
-  /* display: flex; */
+  display: flex;
   min-height: 100vh;
   flex-direction: column;
 }
@@ -275,6 +275,7 @@ a.item:hover, a.item:active, a.item.hover, a.item.active {
 
 .tabHead {
   font-size: 1.5rem;
+  flex: none;
 }
 
 .tabHead div {

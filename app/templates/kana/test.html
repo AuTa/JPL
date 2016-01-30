@@ -15,8 +15,7 @@
 
 
 {% block page_content %}
-<main class="HolyGrail-content">
-  <div class="Grid-cell">
+<main class="HolyGrail-content" style="display: flex;">
     <div class="Grid test-board border">
       <div class="Grid-cell Grid column panel">
         <div class="Grid-cell panel-header border-bottom">
@@ -60,7 +59,7 @@
         <div class="Grid-cell border-bottom active" data-name="tab2">Your Result</div>
         <div class="Grid-cell border-bottom" data-name="tab3">Total Result</div>
       </div>
-      <div class="tabContent Grid-cell Grid column">
+      <div class="tabContent Grid-cell Grid">
         <div class="tab1 Grid-cell Grid"  data-name="tab1" style="flex-wrap: wrap">
           {% set character = ['Seion', 'Dakuon', 'Handakuon', 'Yoon-Seion', 'Yoon-Dakuon', 'Yoon-Handakuon'] %}
           {% for chara in character %}
@@ -89,6 +88,5 @@
         <div class="tab3 Grid-cell"  data-name="tab3">42.</div>
       </div>
     </div>
-  </div>
 </main>
 {% endblock %}
