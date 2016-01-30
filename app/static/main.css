@@ -6,7 +6,7 @@ html, body {
 }
 
 .HolyGrail {
-  display: flex;
+  /* display: flex; */
   min-height: 100vh;
   flex-direction: column;
 }
@@ -54,7 +54,7 @@ a.item:hover, a.item:active, a.item.hover, a.item.active {
 }
 
 .HolyGrail-content {
-  display: flex;
+  /* display: flex; */
   flex: 1;
   flex-direction: column;
 }
@@ -201,7 +201,7 @@ a.item:hover, a.item:active, a.item.hover, a.item.active {
 }
 
 .test-board .panel-body {
-  display: flex;
+  /* display: flex; */
   align-items: center;
   justify-content: center;
 }
