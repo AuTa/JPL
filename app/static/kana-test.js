@@ -16,7 +16,8 @@ $.fn.serializeObject = function()
 };
 
 
-$(document).bind("keyup", "space", function() {
+$(document).keyup( function() {
+    if(event.keyCode == 32) {
     if ($("#kanamoji").prop("disabled")) {
         $("#kanamoji").prop("disabled", false);
         $("#kanamoji").attr("placeholder", "Input the Romaji");
@@ -36,6 +37,7 @@ $(document).bind("keyup", "space", function() {
 
             },
         });
+    }
     }
 });
 
