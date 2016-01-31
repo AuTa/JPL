@@ -2,4 +2,4 @@
 venv/
 instance/
 .idea/
-.db
+*.db
